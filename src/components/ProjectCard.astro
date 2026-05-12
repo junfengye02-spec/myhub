@@ -1,0 +1,58 @@
+---
+import type { Project } from "../data/projects";
+
+type Props = {
+  project: Project;
+};
+
+const { project } = Astro.props;
+const href = `/projects/${project.slug}/`;
+const liveLink = project.links.find((link) => link.external);
+const previewShot = project.screenshots?.[0];
+---
+
+<article
+  class={`project-card accent-${project.accent}`}
+  data-tilt
+  data-reveal
+  data-category={project.category}
+  data-project-card
+  data-title={project.title}
+  data-summary={project.summary}
+  data-stack={project.stack.join(" / ")}
+>
+  <div class:list={["project-visual", { "has-shot": previewShot }]}>
+    {
+      previewShot ? (
+        <img src={previewShot.src} alt="" loading="lazy" decoding="async" />
+      ) : (
+        <>
+          <span></span>
+          <span></span>
+          <span></span>
+        </>
+      )
+    }
+  </div>
+  <div class="project-meta">
+    <span>{project.label}</span>
+    <span>{project.year}</span>
+  </div>
+  <h3>{project.title}</h3>
+  <p>{project.summary}</p>
+  {project.access && <span class="project-access">{project.access}</span>}
+  <div class="project-tags" aria-label="项目技术栈">
+    {project.stack.slice(0, 3).map((item) => <span>{item}</span>)}
+  </div>
+  <strong class="project-metric">{project.metric}</strong>
+  <div class="project-actions">
+    <a href={href} data-teleport>查看详情</a>
+    {
+      liveLink && (
+        <a href={liveLink.href} target="_blank" rel="noreferrer">
+          {liveLink.label}
+        </a>
+      )
+    }
+  </div>
+</article>

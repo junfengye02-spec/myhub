@@ -1,0 +1,101 @@
+---
+import { projects } from "../data/projects";
+import { siteContent } from "../data/siteContent";
+import "../styles/global.css";
+
+type Props = {
+  title: string;
+  description: string;
+  current?: "home" | "projects";
+  image?: string;
+};
+
+const {
+  title,
+  description,
+  current = "home",
+  image = "/og.svg",
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? "http://localhost:5173");
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7faf7" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, canonical).toString()} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+  </head>
+  <body class="theme-day">
+    <div class="cursor-glow" aria-hidden="true"></div>
+    <div class="scroll-meter" aria-hidden="true"><span></span></div>
+    <div class="warp-layer" aria-hidden="true">
+      <span></span>
+      <strong>{siteContent.system.loadingText}</strong>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label={`返回 ${siteContent.brand.name} 首页`}>
+        <span class="brand-mark" aria-hidden="true">
+          <img src="/logo.svg" alt="" width="168" height="56" />
+        </span>
+        <span>{current === "projects" ? siteContent.brand.galleryLabel : siteContent.brand.homeLabel}</span>
+      </a>
+      <nav class="main-nav" aria-label="主导航">
+        <a href={current === "home" ? "#focus" : "/#focus"}>{siteContent.nav.focus}</a>
+        <a href={current === "home" ? "#projects" : "/projects/"}>{siteContent.nav.projects}</a>
+        <a href={current === "home" ? "#contact" : "/#contact"}>{siteContent.nav.contact}</a>
+      </nav>
+      <button class="command-trigger" type="button" data-command-open aria-label="打开命令面板">
+        <span>⌘</span>
+        <b>K</b>
+      </button>
+      <button class="icon-button" type="button" data-theme-toggle aria-label="切换主题">
+        <span class="sun" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <span>{siteContent.footer.label}</span>
+      <a href="/projects/" data-teleport>{siteContent.footer.gallery}</a>
+    </footer>
+
+    <div class="command-palette" data-command-palette aria-hidden="true">
+      <div class="command-backdrop" data-command-close></div>
+      <section class="command-panel" role="dialog" aria-modal="true" aria-label="命令面板">
+        <div class="command-search">
+          <span aria-hidden="true">⌘</span>
+          <input data-command-input type="search" placeholder={siteContent.commandPalette.placeholder} />
+          <button type="button" data-command-close aria-label="关闭命令面板">Esc</button>
+        </div>
+        <div class="command-list" data-command-list>
+          <a href="/" data-command-item>{siteContent.commandPalette.home}</a>
+          <a href="/#focus" data-command-item>{siteContent.commandPalette.focus}</a>
+          <a href="/projects/" data-command-item>{siteContent.commandPalette.projects}</a>
+          <a href="/#contact" data-command-item>{siteContent.commandPalette.contact}</a>
+          {projects.slice(0, 8).map((project) => (
+            <a href={`/projects/${project.slug}/`} data-command-item>{project.title}</a>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <script>
+      import "../scripts/site.ts";
+    </script>
+  </body>
+</html>

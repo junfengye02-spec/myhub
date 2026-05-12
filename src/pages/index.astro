@@ -1,0 +1,163 @@
+---
+import ProjectCard from "../components/ProjectCard.astro";
+import { projects } from "../data/projects";
+import { siteContent } from "../data/siteContent";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const featuredProjects = projects.filter((project) => project.featured).slice(0, 3);
+---
+
+<BaseLayout
+  title={siteContent.pages.home.title}
+  description={siteContent.pages.home.description}
+  current="home"
+>
+  <section class="lab-hero" id="top" aria-labelledby="hero-title">
+    <canvas class="webgl-stage" data-hero-webgl aria-hidden="true"></canvas>
+    <div class="hero-noise" aria-hidden="true"></div>
+
+    <div class="hero-composition">
+      <div class="hero-copy" data-reveal>
+        <p class="eyebrow">{siteContent.hero.eyebrow}</p>
+        <h1 id="hero-title">
+          {siteContent.hero.title.map((line) => <span>{line}</span>)}
+        </h1>
+        <p class="hero-line">{siteContent.hero.summary}</p>
+        <div class="type-row" aria-live="polite">
+          <span>{siteContent.hero.signalLabel}</span>
+          <strong data-typewriter>{siteContent.hero.typeWords[0]}</strong>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary magnetic" href="/projects/" data-teleport>
+            {siteContent.hero.actions.primary}
+          </a>
+          <button class="button ghost magnetic" type="button" data-command-open>
+            {siteContent.hero.actions.secondary}
+          </button>
+        </div>
+      </div>
+
+      <aside class="hero-console" data-reveal aria-label="上线项目状态">
+        <div class="console-header">
+          <span></span>
+          <span></span>
+          <span></span>
+          <strong>profile.runtime</strong>
+        </div>
+        <div class="console-grid">
+          {siteContent.hero.console.map((item) => (
+            <div>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
+
+    <div class="hero-orbit" aria-label="上线项目快捷入口">
+      {featuredProjects.map((project, index) => (
+        <a
+          href={`/projects/${project.slug}/`}
+          class={`orbit-chip chip-${index + 1}`}
+          data-teleport
+        >
+          <span>{project.label}</span>
+          {project.title}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="lab-strip" aria-label="页面关键信息">
+    {siteContent.facts.map((fact) => (
+      <div data-reveal>
+        <strong>{fact.value}</strong>
+        <span>{fact.label}</span>
+      </div>
+    ))}
+  </section>
+
+  <section class="section control-surface" id="focus" aria-labelledby="focus-title">
+    <div class="section-heading wide" data-reveal>
+      <p class="eyebrow">{siteContent.focus.eyebrow}</p>
+      <h2 id="focus-title">{siteContent.focus.title}</h2>
+    </div>
+
+    <div class="capability-matrix">
+      {siteContent.focus.cards.map((item, index) => (
+        <article data-reveal>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section workflow" id="approach" aria-labelledby="workflow-title">
+    <div class="section-heading" data-reveal>
+      <p class="eyebrow">{siteContent.workflow.eyebrow}</p>
+      <h2 id="workflow-title">{siteContent.workflow.title}</h2>
+    </div>
+
+    <ol class="timeline-list">
+      {siteContent.workflow.items.map((item) => (
+        <li data-reveal>
+          <time>{item.marker}</time>
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section projects" id="projects" aria-labelledby="projects-title">
+    <div class="section-heading wide" data-reveal>
+      <p class="eyebrow">{siteContent.sections.projects.eyebrow}</p>
+      <h2 id="projects-title">{siteContent.sections.projects.title}</h2>
+      <p>{siteContent.sections.projects.summary}</p>
+    </div>
+
+    <div class="showcase-shell">
+      <div class="project-grid featured-grid">
+        {featuredProjects.map((project) => <ProjectCard project={project} />)}
+      </div>
+      <aside class="project-inspector" data-project-inspector data-reveal>
+        <span>{siteContent.sections.projects.inspector.label}</span>
+        <h3>{siteContent.sections.projects.inspector.title}</h3>
+        <p>{siteContent.sections.projects.inspector.text}</p>
+        <small>{siteContent.sections.projects.inspector.footer}</small>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section contact" id="contact" aria-labelledby="contact-title">
+    <div class="contact-panel upgraded" data-reveal>
+      <div>
+        <p class="eyebrow">{siteContent.sections.contact.eyebrow}</p>
+        <h2 id="contact-title">{siteContent.sections.contact.title}</h2>
+        <p class="contact-summary">{siteContent.sections.contact.summary}</p>
+      </div>
+      <div class="contact-actions">
+        <a
+          class="button primary magnetic"
+          href={siteContent.sections.contact.primaryHref}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {siteContent.sections.contact.primaryLabel}
+        </a>
+        <button
+          class="button ghost magnetic"
+          type="button"
+          data-copy={siteContent.sections.contact.copyValue}
+        >
+          {siteContent.sections.contact.copyLabel}
+        </button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

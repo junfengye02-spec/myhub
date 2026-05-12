@@ -1,0 +1,20 @@
+{
+  "name": "yven-personal-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port ${PORT:-5173}",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0 --port ${PORT:-5173}"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.2.2",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.59.1",
+    "typescript": "^6.0.3"
+  }
+}

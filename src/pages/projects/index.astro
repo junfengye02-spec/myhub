@@ -1,0 +1,81 @@
+---
+import ProjectCard from "../../components/ProjectCard.astro";
+import { categoryLabels, projects } from "../../data/projects";
+import { siteContent } from "../../data/siteContent";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const categories = Object.entries(categoryLabels);
+---
+
+<BaseLayout
+  title={siteContent.pages.projects.title}
+  description={siteContent.pages.projects.description}
+  current="projects"
+>
+  <section class="project-hero upgraded" aria-labelledby="project-title">
+    <canvas class="webgl-stage subtle" data-hero-webgl aria-hidden="true"></canvas>
+    <div class="project-hero-inner" data-reveal>
+      <p class="eyebrow">{siteContent.projectLibrary.hero.eyebrow}</p>
+      <h1 id="project-title">{siteContent.projectLibrary.hero.title}</h1>
+      <p>
+        {siteContent.projectLibrary.hero.summary}
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="/">{siteContent.projectLibrary.actions.home}</a>
+        <button class="button ghost" type="button" data-command-open>
+          {siteContent.projectLibrary.actions.jump}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section project-library" id="project-list" aria-labelledby="library-title">
+    <div class="section-heading" data-reveal>
+      <p class="eyebrow">{siteContent.projectLibrary.library.eyebrow}</p>
+      <h2 id="library-title">{siteContent.projectLibrary.library.title}</h2>
+    </div>
+
+    <div class="library-tools" data-reveal>
+      <label class="project-search">
+        <span>{siteContent.projectLibrary.library.searchLabel}</span>
+        <input
+          type="search"
+          placeholder={siteContent.projectLibrary.library.searchPlaceholder}
+          data-project-search
+        />
+      </label>
+      <div class="filters" role="list" aria-label="项目筛选">
+        {
+          categories.map(([value, label], index) => (
+            <button
+              class:list={["filter-button", { "is-active": index === 0 }]}
+              type="button"
+              data-filter={value}
+            >
+              {label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="project-grid library-grid">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <section class="section notes" id="notes" aria-labelledby="notes-title">
+    <div class="section-heading" data-reveal>
+      <p class="eyebrow">{siteContent.projectLibrary.notes.eyebrow}</p>
+      <h2 id="notes-title">{siteContent.projectLibrary.notes.title}</h2>
+    </div>
+    <div class="note-grid">
+      {siteContent.projectLibrary.notes.cards.map((card) => (
+        <article data-reveal>
+          <span>{card.label}</span>
+          <p>{card.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

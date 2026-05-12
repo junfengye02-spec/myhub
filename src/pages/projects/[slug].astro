@@ -1,0 +1,177 @@
+---
+import { projects } from "../../data/projects";
+import { siteContent } from "../../data/siteContent";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<BaseLayout
+  title={`${project.title} | ${siteContent.brand.name}`}
+  description={project.summary}
+  current="projects"
+>
+  <section class="project-detail-hero" aria-labelledby="project-detail-title">
+    <div class="project-detail-inner" data-reveal>
+      <a class="back-link" href="/projects/">返回作品库</a>
+      <p class="eyebrow">{project.label} / {project.status}</p>
+      <h1 id="project-detail-title">{project.title}</h1>
+      <p>{project.description}</p>
+      {project.access && <span class="detail-access">{project.access}</span>}
+      <div class="detail-actions">
+        {
+          project.links.map((link, index) => (
+            <a
+              class:list={["button", index === 0 ? "primary" : "ghost"]}
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noreferrer" : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+      {
+        project.demoAccount && (
+          <aside class="demo-account" aria-label="演示测试账号">
+            <div>
+              <span>演示测试账号</span>
+              <p>{project.demoAccount.note}</p>
+            </div>
+            <dl class="demo-credentials">
+              <div>
+                <dt>账号</dt>
+                <dd>
+                  <code>{project.demoAccount.username}</code>
+                  <button type="button" data-copy={project.demoAccount.username}>
+                    复制
+                  </button>
+                </dd>
+              </div>
+              <div>
+                <dt>密码</dt>
+                <dd>
+                  <code>{project.demoAccount.password}</code>
+                  <button type="button" data-copy={project.demoAccount.password}>
+                    复制
+                  </button>
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        )
+      }
+      <div class="detail-facts" aria-label="项目概览">
+        <span>
+          <small>年份</small>
+          <strong>{project.year}</strong>
+        </span>
+        <span>
+          <small>类型</small>
+          <strong>{project.label}</strong>
+        </span>
+        <span>
+          <small>访问</small>
+          <strong>{project.access ?? "站内详情"}</strong>
+        </span>
+        <span>
+          <small>定位</small>
+          <strong>{project.metric}</strong>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  {
+    project.screenshots?.length && (
+      <section class="section detail-gallery" aria-labelledby="gallery-title">
+        <div class="section-heading" data-reveal>
+          <p class="eyebrow">Inside View</p>
+          <h2 id="gallery-title">真实项目截图</h2>
+        </div>
+        <div class="screenshot-grid" data-reveal>
+          {project.screenshots.map((shot) => (
+            <figure>
+              <img src={shot.src} alt={shot.alt} loading="lazy" decoding="async" />
+              <figcaption>{shot.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    project.caseStudy && (
+      <section class="section case-study" aria-labelledby="case-study-title">
+        <div class="section-heading wide" data-reveal>
+          <p class="eyebrow">Case Study</p>
+          <h2 id="case-study-title">我在这个项目里做了什么</h2>
+        </div>
+
+        <article class="role-panel" data-reveal>
+          <span>我的角色</span>
+          <p>{project.caseStudy.role}</p>
+        </article>
+
+        <div class="case-grid">
+          <article data-reveal>
+            <h3>核心模块</h3>
+            <ul>
+              {project.caseStudy.modules.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+          <article data-reveal>
+            <h3>技术难点</h3>
+            <ul>
+              {project.caseStudy.challenges.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+          <article data-reveal>
+            <h3>上线结果</h3>
+            <ul>
+              {project.caseStudy.outcomes.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    project.highlights?.length && (
+      <section class="section detail-notes" aria-labelledby="highlights-title">
+        <div class="section-heading" data-reveal>
+          <p class="eyebrow">Project Signals</p>
+          <h2 id="highlights-title">为什么这个项目适合放进个人主页</h2>
+        </div>
+        <div class="highlight-list" data-reveal>
+          {project.highlights.map((item, index) => (
+            <article>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section detail-section" aria-labelledby="stack-title">
+    <div class="section-heading" data-reveal>
+      <p class="eyebrow">Stack</p>
+      <h2 id="stack-title">技术栈与方向</h2>
+    </div>
+    <div class="stack-list" data-reveal>
+      {project.stack.map((item) => <span>{item}</span>)}
+    </div>
+  </section>
+</BaseLayout>
