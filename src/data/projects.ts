@@ -4,6 +4,7 @@
 // - stack：标签
 // - role / caseStudy：详情页里的角色、负责模块、技术难点和上线结果
 // - highlights：详情页里的真实观察/补充说明
+
 // - screenshots：详情页截图；第一张也会作为作品卡片缩略图
 // - access：访问状态，比如“需登录”或“公开访问”
 // - links：详情页按钮；external 为 true 会打开新标签
@@ -98,13 +99,13 @@ export const projects: Project[] = [
         "已部署到线上域名，可从个人站进入登录页和真实排程内页截图。",
         "本地源码包含 30+ Controller、400+ REST 映射，覆盖订单、物料、库存、资源、排程、Pegging、What-If、导入导出和 AI 服务。",
         "项目文档记录了 105/105 单测通过、后续单测增强、E2E/契约审计、K8s/Docker/监控/密钥治理等生产化工作。",
-        "适合作为个人页第一案例：它证明你能做复杂工业业务系统，而不是只做静态展示页。",
+        "整体从前端甘特图到后端排程引擎、从服务治理到上线验证，构成一条完整的工业系统交付链路。",
       ],
     },
     highlights: [
-      "源码 README 明确包含正向排程、JIT 逆向排程、瓶颈排程、模拟退火、OR-Tools CP-SAT 和 What-If 模拟。",
+      "README 明确覆盖正向排程、JIT 逆向排程、瓶颈排程、模拟退火、OR-Tools CP-SAT 和 What-If 模拟。",
       "前端真实页面包含排程甘特图、指标卡、资源利用率趋势、订单任务时间轴和资源筛选。",
-      "GitHub 仓库已公开，可作为你复杂系统工程能力的主要证据。",
+      "GitHub 源码已公开，可按微服务、排程引擎、AI Service 逐层进入阅读。",
     ],
     screenshots: [
       {
@@ -163,7 +164,7 @@ export const projects: Project[] = [
     highlights: [
       "源码 README 显示它覆盖订单计划、生产工单、派工调度、质量管控、物料管理和 APS 外部系统集成。",
       "登录后能看到完整左侧业务导航：基础数据、工艺管理、计划管理、生产工单、生产派工、质量、物料和 APS 集成。",
-      "它适合放在个人页第二案例：突出你能做真实工厂后台业务流，而不是只做 UI 页面。",
+      "从基础数据到派工、质量、物料和外部集成，是一条覆盖车间真实业务流的后台系统。",
     ],
     screenshots: [
       {
@@ -210,14 +211,14 @@ export const projects: Project[] = [
       outcomes: [
         "已部署公开首页，用户无需登录就能了解产品定位、调用方式和支持模型。",
         "本地源码显示网关基于 Go/Gin 实现，并包含 auth、management、translator、registry、SDK、watcher、logging 等模块。",
-        "CLIProxyAPI 上游 GitHub 已有 31k+ Star，说明这个方向本身贴合 AI agent / coding tool / self-hosted gateway 的热门趋势。",
-        "适合作为个人页第三案例：和 APS/MES 形成组合，证明你既懂工业系统，也能追上 AI 工具链产品化。",
+        "CLIProxyAPI 上游 GitHub 已有 31k+ Star，方向贴合 AI agent、coding tool 和自托管网关的实际需求。",
+        "与 APS / MES 在定位上互补：一边是重业务的工业系统，一边是面向开发者的 AI 基础设施。",
       ],
     },
     highlights: [
       "首页直接解释核心价值：统一 API、账号池调度、会话保持和开发者调用。",
-      "终端代码块强化开发者场景，适合展示 API 网关产品的技术属性。",
-      "模型支持区展示 Claude、GPT、Gemini、Codex、Antigravity 等接入状态，降低用户理解成本。",
+      "终端代码块呈现真实的 curl 调用示例，直接对上开发者的使用场景。",
+      "模型支持区展示 Claude、GPT、Gemini、Codex、Antigravity 等接入状态，信息密度贴近产品页。",
     ],
     screenshots: [
       {

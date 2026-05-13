@@ -397,6 +397,211 @@ function setupHeroScene() {
   });
 }
 
+function setupHeroGlow() {
+  const title = document.querySelector<HTMLElement>("[data-hero-glow]");
+  if (!title || reduceMotion) return;
+
+  const onMove = (event: PointerEvent) => {
+    const rect = title.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    title.style.setProperty("--glow-x", `${x}%`);
+    title.style.setProperty("--glow-y", `${y}%`);
+  };
+
+  const hero = title.closest(".lab-hero") ?? document;
+  hero.addEventListener("pointermove", onMove as EventListener, { passive: true } as AddEventListenerOptions);
+}
+
+function setupTerminal() {
+  const terminal = document.querySelector<HTMLElement>("[data-terminal]");
+  if (!terminal) return;
+
+  const lines = Array.from(terminal.querySelectorAll<HTMLElement>("[data-term-line]"));
+  const caret = terminal.querySelector<HTMLElement>("[data-term-caret]");
+  if (!lines.length) return;
+
+  const originalText = lines.map((line) => {
+    const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+    return textEl?.textContent ?? "";
+  });
+
+  lines.forEach((line) => {
+    const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+    if (textEl) textEl.textContent = "";
+  });
+
+  if (reduceMotion) {
+    lines.forEach((line, i) => {
+      const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+      if (textEl) textEl.textContent = originalText[i];
+      line.classList.add("is-on");
+    });
+    return;
+  }
+
+  const moveCaretTo = (line: HTMLElement) => {
+    if (!caret) return;
+    const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+    if (!textEl) return;
+    const rect = textEl.getBoundingClientRect();
+    const hostRect = terminal.getBoundingClientRect();
+    caret.style.transform = `translate(${rect.right - hostRect.left + 2}px, ${rect.top - hostRect.top}px)`;
+  };
+
+  async function typeLine(line: HTMLElement, text: string, speed: number) {
+    line.classList.add("is-on");
+    const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+    if (!textEl) return;
+    for (let i = 0; i < text.length; i += 1) {
+      textEl.textContent = text.slice(0, i + 1);
+      moveCaretTo(line);
+      await new Promise((r) => setTimeout(r, speed + Math.random() * 18));
+    }
+  }
+
+  async function runCycle() {
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
+      const isCmd = line.classList.contains("term-cmd");
+      await typeLine(line, originalText[i], isCmd ? 24 : 8);
+      await new Promise((r) => setTimeout(r, isCmd ? 360 : 520));
+    }
+    await new Promise((r) => setTimeout(r, 1800));
+    lines.forEach((line) => {
+      line.classList.remove("is-on");
+      const textEl = line.querySelector<HTMLElement>("[data-term-text]");
+      if (textEl) textEl.textContent = "";
+    });
+    runCycle();
+  }
+
+  const start = () => {
+    window.setTimeout(runCycle, 420);
+  };
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          start();
+          io.disconnect();
+        }
+      });
+    });
+    io.observe(terminal);
+  } else {
+    start();
+  }
+}
+
+function animateCount(target: HTMLElement, to: number, duration = 1400) {
+  if (reduceMotion) {
+    target.textContent = String(to);
+    return;
+  }
+  const start = performance.now();
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+  const tick = (now: number) => {
+    const elapsed = Math.min(1, (now - start) / duration);
+    const value = Math.round(to * ease(elapsed));
+    target.textContent = String(value);
+    if (elapsed < 1) window.requestAnimationFrame(tick);
+    else target.textContent = String(to);
+  };
+  window.requestAnimationFrame(tick);
+}
+
+function setupCountUp() {
+  const targets = document.querySelectorAll<HTMLElement>("[data-countup]");
+  targets.forEach((el) => {
+    const raw = el.dataset.countup;
+    if (!raw) return;
+    const value = parseInt(raw, 10);
+    if (Number.isNaN(value)) return;
+    el.textContent = "0";
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCount(el, value);
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    io.observe(el);
+  });
+}
+
+function setupConstellation() {
+  const host = document.querySelector<HTMLElement>("[data-constellation]");
+  if (!host) return;
+
+  const nodes = Array.from(host.querySelectorAll<HTMLElement>(".constellation-node"));
+  const numbers = Array.from(host.querySelectorAll<HTMLElement>("[data-countup-num]"));
+
+  const reveal = () => {
+    nodes.forEach((node) => {
+      const delay = Number(node.dataset.nodeDelay ?? 0);
+      window.setTimeout(() => {
+        host.classList.add("is-visible");
+      }, delay);
+    });
+    host.classList.add("is-visible");
+    numbers.forEach((num, i) => {
+      const val = parseInt(num.dataset.countupNum ?? "0", 10);
+      if (Number.isNaN(val)) return;
+      window.setTimeout(() => animateCount(num, val, 1300 + i * 80), 320 + i * 90);
+    });
+  };
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          reveal();
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    io.observe(host);
+  } else {
+    reveal();
+  }
+}
+
+function setupTimelineRail() {
+  const list = document.querySelector<HTMLElement>("[data-timeline]");
+  const rail = list?.querySelector<HTMLElement>("[data-timeline-rail] i");
+  if (!list || !rail) return;
+
+  const update = () => {
+    const rect = list.getBoundingClientRect();
+    const viewportH = window.innerHeight;
+    const total = rect.height;
+    const travelled = Math.min(
+      total,
+      Math.max(0, viewportH * 0.62 - rect.top)
+    );
+    const progress = total > 0 ? (travelled / total) * 100 : 0;
+    rail.style.setProperty("--rail", `${Math.min(100, Math.max(0, progress))}%`);
+  };
+
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+}
+
+function setupStripGlow() {
+  if (reduceMotion) return;
+  document.querySelectorAll<HTMLElement>(".lab-strip div").forEach((cell) => {
+    cell.addEventListener("pointermove", (event) => {
+      const rect = cell.getBoundingClientRect();
+      cell.style.setProperty("--fx", `${((event.clientX - rect.left) / rect.width) * 100}%`);
+      cell.style.setProperty("--fy", `${((event.clientY - rect.top) / rect.height) * 100}%`);
+    });
+  });
+}
+
 window.addEventListener("pointermove", updatePointer);
 window.addEventListener("scroll", updateScrollMeter, { passive: true });
 window.addEventListener("resize", updateScrollMeter);
@@ -410,5 +615,11 @@ setupCopy();
 setupCommandPalette();
 setupProjectBrowser();
 setupHeroScene();
+setupHeroGlow();
+setupTerminal();
+setupCountUp();
+setupConstellation();
+setupTimelineRail();
+setupStripGlow();
 updateScrollMeter();
 rotateType();

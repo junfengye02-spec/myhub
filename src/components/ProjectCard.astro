@@ -36,7 +36,10 @@ const previewShot = project.screenshots?.[0];
   </div>
   <div class="project-meta">
     <span>{project.label}</span>
-    <span>{project.year}</span>
+    <span class="project-status" data-live={project.status === "Live"}>
+      {project.status === "Live" && <i class="live-dot" aria-hidden="true"></i>}
+      {project.status} · {project.year}
+    </span>
   </div>
   <h3>{project.title}</h3>
   <p>{project.summary}</p>

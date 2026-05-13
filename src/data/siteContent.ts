@@ -40,6 +40,21 @@ export const siteContent = {
       { label: "AI", value: "Gateway" },
       { label: "Role", value: "Build & Ship" },
     ],
+    terminal: {
+      host: "yven@atelier",
+      path: "~/systems",
+      prompt: "$",
+      lines: [
+        { type: "cmd", text: "curl https://aps.0000238.xyz/api/schedule/run" },
+        { type: "out", text: "→ 200 OK  OR-Tools CP-SAT  resolved 842 tasks  (312ms)" },
+        { type: "cmd", text: "curl https://mesmac.0000238.xyz/api/workorder/dispatch" },
+        { type: "out", text: "→ 200 OK  dispatched 37 workorders  RBAC ✓  (94ms)" },
+        { type: "cmd", text: "curl https://api.0000238.xyz/v1/chat/completions" },
+        { type: "out", text: "→ 200 OK  stream  claude-opus-4  gateway routed ✓" },
+        { type: "cmd", text: "echo \"$(whoami) — build & ship\"" },
+        { type: "out", text: "→ yven — build & ship" },
+      ],
+    },
   },
   facts: [
     { label: "已上线作品", value: "3" },
@@ -47,9 +62,46 @@ export const siteContent = {
     { label: "工程跨度", value: "Full-stack" },
     { label: "个人定位", value: "Build & Ship" },
   ],
+  arsenal: {
+    eyebrow: "Tech Arsenal",
+    title: "每天在用的工具箱。",
+    groups: [
+      { label: "Frontend", items: ["Vue 3", "TypeScript", "Element Plus", "Astro", "ECharts", "AntV X6", "dhtmlx-gantt"] },
+      { label: "Backend", items: ["Spring Boot 3", "Spring Cloud", "Gateway", "Nacos", "RocketMQ", "Seata", "Sentinel", "MyBatis Plus"] },
+      { label: "AI & Gateway", items: ["Go + Gin", "FastAPI", "LangChain", "OpenAI API", "Claude API", "Gemini", "OR-Tools"] },
+      { label: "Infra", items: ["Docker", "Nginx", "Redis", "MySQL", "JWT / RBAC", "Playwright", "GitHub Actions"] },
+    ],
+  },
+  telemetry: {
+    eyebrow: "By the Numbers",
+    title: "可验证的工程体量。",
+    summary: "下面这些数字都来自真实仓库和上线报告。",
+    nodes: [
+      { value: 30, suffix: "+", label: "Controllers", hint: "Titan APS 单服务", position: { x: 12, y: 22 } },
+      { value: 400, suffix: "+", label: "REST Mappings", hint: "APS 订单 / 物料 / 排程", position: { x: 36, y: 12 } },
+      { value: 220, suffix: "+", label: "单测通过", hint: "MES M8 验收", position: { x: 62, y: 20 } },
+      { value: 25, suffix: "", label: "业务模块", hint: "MES 后端 verify", position: { x: 84, y: 32 } },
+      { value: 40, suffix: "+", label: "前端视图", hint: "MES 工作台页面", position: { x: 18, y: 64 } },
+      { value: 15, suffix: "", label: "Playwright E2E", hint: "端到端覆盖", position: { x: 46, y: 72 } },
+      { value: 31, suffix: "k+", label: "Gateway Stars", hint: "Sub2API 上游社区", position: { x: 72, y: 68 } },
+      { value: 100, suffix: "%", label: "P0/P1 落地", hint: "MES 整改项", position: { x: 90, y: 60 } },
+    ],
+    links: [
+      { from: 0, to: 1 },
+      { from: 1, to: 2 },
+      { from: 2, to: 3 },
+      { from: 0, to: 4 },
+      { from: 4, to: 5 },
+      { from: 5, to: 2 },
+      { from: 5, to: 6 },
+      { from: 6, to: 7 },
+      { from: 3, to: 7 },
+      { from: 2, to: 5 },
+    ],
+  },
   focus: {
     eyebrow: "Profile",
-    title: "我的主页主线：理解业务，也把系统做完。",
+    title: "理解业务，也把系统做完。",
     cards: [
       {
         title: "业务建模与系统架构",
@@ -67,30 +119,30 @@ export const siteContent = {
   },
   workflow: {
     eyebrow: "Approach",
-    title: "我希望访客看完主页后，记住这三件事。",
+    title: "工作里持续关注的三件事。",
     items: [
       {
         marker: "01",
-        title: "能进入复杂业务现场",
+        title: "进入复杂业务现场",
         text: "APS 和 MES 不是孤立页面，而是围绕制造计划、执行、物料、质量和系统集成展开的真实业务系统。",
       },
       {
         marker: "02",
-        title: "能把工程细节落到界面里",
-        text: "页面展示真实截图、访问状态、技术栈、我的角色和实现难点，让作品不仅好看，也能被判断。",
+        title: "把工程细节落到界面里",
+        text: "每个项目都带真实截图、访问状态、技术栈、角色划分和实现难点，信息和代码一样经得起拆开看。",
       },
       {
         marker: "03",
         title: "持续把 AI 能力接入工具流",
-        text: "Sub2API 展示了我对 AI 编程工具、统一 API、模型路由和自托管网关的兴趣，也补上了工业系统之外的产品维度。",
+        text: "Sub2API 聚焦 AI 编程工具、统一 API、模型路由和自托管网关，补上了工业系统之外的产品维度。",
       },
     ],
   },
   sections: {
     projects: {
       eyebrow: "Live Projects",
-      title: "三个已上线项目，构成我的作品主轴。",
-      summary: "它们分别代表工业排程、制造执行和 AI API 网关，也对应我想长期积累的系统工程方向。",
+      title: "三个已上线项目，构成作品主轴。",
+      summary: "分别代表工业排程、制造执行和 AI API 网关，也对应我长期积累的系统工程方向。",
       inspector: {
         label: "项目预览",
         title: "移到项目卡片",
@@ -100,8 +152,8 @@ export const siteContent = {
     },
     contact: {
       eyebrow: "Contact",
-      title: "如果你在看制造系统、AI 网关或全栈工程，我很愿意继续聊。",
-      summary: "可以从 GitHub 查看源码和项目线索；如果你想补充更正式的邮箱或微信，也只需要改这里的内容配置。",
+      title: "做制造系统、AI 网关或全栈工程，欢迎继续聊。",
+      summary: "源码和项目线索都在 GitHub；其它联系方式会陆续补到这里。",
       primaryHref: "https://github.com/junfengye02-spec",
       primaryLabel: "打开 GitHub",
       copyValue: "junfengye02-spec",
@@ -113,7 +165,7 @@ export const siteContent = {
       eyebrow: "Project Portfolio",
       title: "项目作品",
       summary:
-        "这里按真实上线作品组织：每个项目都尽量讲清楚业务问题、我的角色、关键模块、技术难点、访问状态和可验证截图。",
+        "按上线作品组织：每个项目都讲清楚业务问题、角色、关键模块、技术难点、访问状态和可验证截图。",
     },
     actions: {
       home: "回到首页",
@@ -131,11 +183,11 @@ export const siteContent = {
       cards: [
         {
           label: "先看结果",
-          text: "首页优先展示上线状态和真实截图，让访客第一眼知道这些不是概念稿，而是能访问、能展开的项目。",
+          text: "首页优先展示上线状态和真实截图，项目都可以直接访问、展开。",
         },
         {
           label: "再看角色",
-          text: "详情页会把我的角色、核心模块、技术挑战和上线结果展开，帮助别人判断我的系统工程能力。",
+          text: "详情页展开角色、核心模块、技术挑战和上线结果，方便按工程细节逐层评估。",
         },
       ],
     },

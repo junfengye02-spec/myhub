@@ -13,6 +13,7 @@ export function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
+
 <BaseLayout
   title={`${project.title} | ${siteContent.brand.name}`}
   description={project.summary}
@@ -151,7 +152,7 @@ const { project } = Astro.props;
       <section class="section detail-notes" aria-labelledby="highlights-title">
         <div class="section-heading" data-reveal>
           <p class="eyebrow">Project Signals</p>
-          <h2 id="highlights-title">为什么这个项目适合放进个人主页</h2>
+          <h2 id="highlights-title">值得一提的细节</h2>
         </div>
         <div class="highlight-list" data-reveal>
           {project.highlights.map((item, index) => (
