@@ -30,7 +30,7 @@ const { project } = Astro.props;
         {
           project.links.map((link, index) => (
             <a
-              class:list={["button", index === 0 ? "primary" : "ghost"]}
+              class:list={["button", index === 0 ? "button-primary" : "button-ghost"]}
               href={link.href}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noreferrer" : undefined}
@@ -40,36 +40,6 @@ const { project } = Astro.props;
           ))
         }
       </div>
-      {
-        project.demoAccount && (
-          <aside class="demo-account" aria-label="演示测试账号">
-            <div>
-              <span>演示测试账号</span>
-              <p>{project.demoAccount.note}</p>
-            </div>
-            <dl class="demo-credentials">
-              <div>
-                <dt>账号</dt>
-                <dd>
-                  <code>{project.demoAccount.username}</code>
-                  <button type="button" data-copy={project.demoAccount.username}>
-                    复制
-                  </button>
-                </dd>
-              </div>
-              <div>
-                <dt>密码</dt>
-                <dd>
-                  <code>{project.demoAccount.password}</code>
-                  <button type="button" data-copy={project.demoAccount.password}>
-                    复制
-                  </button>
-                </dd>
-              </div>
-            </dl>
-          </aside>
-        )
-      }
       <div class="detail-facts" aria-label="项目概览">
         <span>
           <small>年份</small>

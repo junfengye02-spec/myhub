@@ -3,79 +3,29 @@ import ProjectCard from "../../components/ProjectCard.astro";
 import { categoryLabels, projects } from "../../data/projects";
 import { siteContent } from "../../data/siteContent";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-
 const categories = Object.entries(categoryLabels);
 ---
 
-<BaseLayout
-  title={siteContent.pages.projects.title}
-  description={siteContent.pages.projects.description}
-  current="projects"
->
-  <section class="project-hero upgraded" aria-labelledby="project-title">
-    <canvas class="webgl-stage subtle" data-hero-webgl aria-hidden="true"></canvas>
+<BaseLayout title={siteContent.pages.projects.title} description={siteContent.pages.projects.description} current="projects">
+  <section class="project-hero" aria-labelledby="project-title">
     <div class="project-hero-inner" data-reveal>
-      <p class="eyebrow">{siteContent.projectLibrary.hero.eyebrow}</p>
-      <h1 id="project-title">{siteContent.projectLibrary.hero.title}</h1>
-      <p>
-        {siteContent.projectLibrary.hero.summary}
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="/">{siteContent.projectLibrary.actions.home}</a>
-        <button class="button ghost" type="button" data-command-open>
-          {siteContent.projectLibrary.actions.jump}
-        </button>
-      </div>
+      <p class="section-label">PROJECT ARCHIVE / 2026</p>
+      <h1 id="project-title">五个系统，<br />五种复杂度。</h1>
+      <p>从制造协同、文档审评和量化研究，到模型网关与视频创作工作台。所有可见界面都来自真实项目，架构与数据均标注公开边界。</p>
+      <div class="hero-actions"><a class="button button-primary" href="/#projects">返回精选项目 <i>↙</i></a></div>
     </div>
   </section>
 
-  <section class="section project-library" id="project-list" aria-labelledby="library-title">
+  <section class="section project-library" aria-labelledby="library-title">
     <div class="section-heading" data-reveal>
-      <p class="eyebrow">{siteContent.projectLibrary.library.eyebrow}</p>
-      <h2 id="library-title">{siteContent.projectLibrary.library.title}</h2>
+      <p class="section-label">ALL WORK</p><h2 id="library-title">项目档案</h2>
     </div>
-
     <div class="library-tools" data-reveal>
-      <label class="project-search">
-        <span>{siteContent.projectLibrary.library.searchLabel}</span>
-        <input
-          type="search"
-          placeholder={siteContent.projectLibrary.library.searchPlaceholder}
-          data-project-search
-        />
-      </label>
-      <div class="filters" role="list" aria-label="项目筛选">
-        {
-          categories.map(([value, label], index) => (
-            <button
-              class:list={["filter-button", { "is-active": index === 0 }]}
-              type="button"
-              data-filter={value}
-            >
-              {label}
-            </button>
-          ))
-        }
+      <label class="project-search"><span>搜索</span><input type="search" placeholder="项目 / 技术栈" data-project-search /></label>
+      <div class="filters" aria-label="项目筛选">
+        {categories.map(([value, label], index) => <button class:list={["filter-button", { "is-active": index === 0 }]} type="button" data-filter={value}>{label}</button>)}
       </div>
     </div>
-
-    <div class="project-grid library-grid">
-      {projects.map((project) => <ProjectCard project={project} />)}
-    </div>
-  </section>
-
-  <section class="section notes" id="notes" aria-labelledby="notes-title">
-    <div class="section-heading" data-reveal>
-      <p class="eyebrow">{siteContent.projectLibrary.notes.eyebrow}</p>
-      <h2 id="notes-title">{siteContent.projectLibrary.notes.title}</h2>
-    </div>
-    <div class="note-grid">
-      {siteContent.projectLibrary.notes.cards.map((card) => (
-        <article data-reveal>
-          <span>{card.label}</span>
-          <p>{card.text}</p>
-        </article>
-      ))}
-    </div>
+    <div class="project-grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
   </section>
 </BaseLayout>

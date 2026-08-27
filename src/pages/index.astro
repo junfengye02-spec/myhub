@@ -1,157 +1,68 @@
 ---
-import ProjectCard from "../components/ProjectCard.astro";
 import { projects } from "../data/projects";
 import { siteContent } from "../data/siteContent";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const featuredProjects = projects.filter((project) => project.featured).slice(0, 3);
+const [apsMes, review, quant, api, mise] = projects;
+const quantLayers = [
+  { no: "I", title: "Intelligence", text: "市场 / 新闻 / 宏观 / SEC", output: "WorldStateVector" },
+  { no: "II", title: "Alpha", text: "LLM 假设 / 沙箱 / Walk-forward", output: "Factor Candidates" },
+  { no: "III", title: "Committee", text: "Bull / Bear / Quant / Risk", output: "Trade Directive" },
+  { no: "IV", title: "Execution", text: "Gate / Overlay / Circuit Breaker", output: "TWAP · VWAP" },
+  { no: "V", title: "MLOps", text: "日志 / 衰减 / Prompt 演化", output: "Evaluation Loop" },
+];
+const papers = [
+  ["TradingAgents", "Multi-agent financial trading framework", "https://arxiv.org/abs/2412.20138"],
+  ["LLM Alpha Mining", "LLM-powered factor discovery", "https://arxiv.org/abs/2502.16789"],
+  ["MCTS Alpha Mining", "Search-based alpha discovery", "https://arxiv.org/abs/2505.11122"],
+  ["Multi-Day Turnover", "Portfolio turnover research", "https://arxiv.org/abs/2506.06356"],
+];
 ---
 
-<BaseLayout
-  title={siteContent.pages.home.title}
-  description={siteContent.pages.home.description}
-  current="home"
->
-  <section class="lab-hero" id="top" aria-labelledby="hero-title">
-    <canvas class="webgl-stage" data-hero-webgl aria-hidden="true"></canvas>
-    <div class="hero-noise" aria-hidden="true"></div>
+<BaseLayout title={siteContent.pages.home.title} description={siteContent.pages.home.description} current="home">
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <canvas class="hero-canvas" data-hero-canvas aria-hidden="true"></canvas>
+    <div class="hero-watermark" aria-hidden="true">
+      <span>复杂</span><span>可用</span>
+    </div>
+    <div class="hero-coordinate coordinate-a" aria-hidden="true">23°07′ N</div>
+    <div class="hero-coordinate coordinate-b" aria-hidden="true">113°16′ E</div>
 
-    <div class="hero-composition">
-      <div class="hero-copy" data-reveal>
-        <p class="eyebrow">{siteContent.hero.eyebrow}</p>
-        <h1 id="hero-title" data-hero-glow>
-          {siteContent.hero.title.map((line) => <span>{line}</span>)}
-        </h1>
-        <p class="hero-line">{siteContent.hero.summary}</p>
-        <div class="type-row" aria-live="polite">
-          <span>{siteContent.hero.signalLabel}</span>
-          <strong data-typewriter>{siteContent.hero.typeWords[0]}</strong>
-        </div>
-        <div class="hero-actions">
-          <a class="button primary magnetic" href="/projects/" data-teleport>
-            {siteContent.hero.actions.primary}
-          </a>
-          <button class="button ghost magnetic" type="button" data-command-open>
-            {siteContent.hero.actions.secondary}
-          </button>
-        </div>
+    <div class="hero-copy" data-reveal>
+      <p class="kicker">{siteContent.hero.eyebrow}</p>
+      <h1 id="hero-title">{siteContent.hero.title}</h1>
+      <p class="hero-statement">
+        把 Agent、RAG 与 <em>复杂业务</em>，<br />做成真正<span>可用</span>的系统。
+      </p>
+      <p class="hero-summary">{siteContent.hero.summary}</p>
+      <div class="hero-actions">
+        <a class="button button-primary magnetic" href="#projects">查看项目 <i>↘</i></a>
+        <a class="button button-ghost magnetic" href={siteContent.contact.github} target="_blank" rel="noreferrer">GitHub <i>↗</i></a>
+        <a class="button button-ghost magnetic" href={siteContent.contact.resume} target="_blank">下载简历 <i>↓</i></a>
       </div>
-
-      <aside class="hero-console" data-reveal aria-label="上线项目状态">
-        <div class="console-header">
-          <span></span>
-          <span></span>
-          <span></span>
-          <strong>{siteContent.hero.terminal.host}:{siteContent.hero.terminal.path}</strong>
-        </div>
-        <div class="console-terminal" data-terminal aria-hidden="true">
-          {siteContent.hero.terminal.lines.map((line, i) => (
-            <div class={`term-line term-${line.type}`} data-term-line data-term-index={i}>
-              {line.type === "cmd" && <span class="term-prompt">{siteContent.hero.terminal.prompt}</span>}
-              <span class="term-text" data-term-text>{line.text}</span>
-            </div>
-          ))}
-          <div class="term-caret" data-term-caret aria-hidden="true"></div>
-        </div>
-        <div class="console-grid" aria-label="运行时信息">
-          {siteContent.hero.console.map((item) => (
-            <div>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-            </div>
-          ))}
-        </div>
-      </aside>
     </div>
-
-    <div class="hero-orbit" aria-label="上线项目快捷入口">
-      {featuredProjects.map((project, index) => (
-        <a
-          href={`/projects/${project.slug}/`}
-          class={`orbit-chip chip-${index + 1}`}
-          data-teleport
-        >
-          <span>{project.label}</span>
-          {project.title}
-        </a>
-      ))}
-    </div>
+    <div class="hero-scroll" aria-hidden="true"><i></i><span>SCROLL TO EXPLORE</span></div>
   </section>
 
-  <section class="lab-strip" aria-label="页面关键信息">
-    {siteContent.facts.map((fact) => (
-      <div data-reveal>
-        <strong data-countup={/^\d+$/.test(fact.value) ? fact.value : undefined}>{fact.value}</strong>
-        <span>{fact.label}</span>
+  <section class="metric-ribbon" aria-label="关键数据">
+    {siteContent.metrics.map((metric, index) => (
+      <div data-reveal style={`--delay:${index * 70}ms`}>
+        <strong data-count-text={metric.value}>{metric.value}</strong>
+        <span>{metric.label}</span>
       </div>
     ))}
   </section>
 
-  <section class="tech-arsenal" aria-label={siteContent.arsenal.title} data-reveal>
-    <div class="arsenal-heading">
-      <p class="eyebrow">{siteContent.arsenal.eyebrow}</p>
-      <h3>{siteContent.arsenal.title}</h3>
+  <section class="profile section-shell" id="profile" aria-labelledby="profile-title">
+    <div class="profile-intro" data-reveal>
+      <p class="section-label">ABOUT / 00</p>
+      <h2 id="profile-title">从复杂流程里，<br />找出能被系统承接的结构。</h2>
+      <p>我关注的不是 Demo，而是可验证、可交付、可持续迭代的系统：有数据、有边界、有异常恢复，也有人能够真正使用。</p>
     </div>
-    <div class="arsenal-track" data-arsenal>
-      <div class="arsenal-row" data-arsenal-row>
-        {[...siteContent.arsenal.groups, ...siteContent.arsenal.groups].map((group) => (
-          <div class="arsenal-group">
-            <em>{group.label}</em>
-            <ul>
-              {group.items.map((item) => <li>{item}</li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section telemetry" id="telemetry" aria-labelledby="telemetry-title" data-reveal>
-    <div class="section-heading wide">
-      <p class="eyebrow">{siteContent.telemetry.eyebrow}</p>
-      <h2 id="telemetry-title">{siteContent.telemetry.title}</h2>
-      <p>{siteContent.telemetry.summary}</p>
-    </div>
-
-    <div class="constellation" data-constellation aria-hidden="true">
-      <svg class="constellation-lines" data-constellation-svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        {siteContent.telemetry.links.map((link, i) => {
-          const from = siteContent.telemetry.nodes[link.from].position;
-          const to = siteContent.telemetry.nodes[link.to].position;
-          return <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} data-line-index={i} />;
-        })}
-      </svg>
-      {siteContent.telemetry.nodes.map((node, i) => (
-        <div
-          class="constellation-node"
-          style={`left:${node.position.x}%;top:${node.position.y}%`}
-          data-node-index={i}
-          data-node-delay={i * 80}
-        >
-          <div class="node-dot"></div>
-          <div class="node-card">
-            <strong>
-              <span data-countup-num={node.value.toString()}>0</span>
-              <em>{node.suffix}</em>
-            </strong>
-            <span class="node-label">{node.label}</span>
-            <small>{node.hint}</small>
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="section control-surface" id="focus" aria-labelledby="focus-title">
-    <div class="section-heading wide" data-reveal>
-      <p class="eyebrow">{siteContent.focus.eyebrow}</p>
-      <h2 id="focus-title">{siteContent.focus.title}</h2>
-    </div>
-
-    <div class="capability-matrix">
-      {siteContent.focus.cards.map((item, index) => (
+    <div class="profile-grid">
+      {siteContent.profile.map((item) => (
         <article data-reveal>
-          <span>{String(index + 1).padStart(2, "0")}</span>
+          <span>{item.index}</span>
           <h3>{item.title}</h3>
           <p>{item.text}</p>
         </article>
@@ -159,72 +70,221 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
     </div>
   </section>
 
-  <section class="section workflow" id="approach" aria-labelledby="workflow-title">
-    <div class="section-heading" data-reveal>
-      <p class="eyebrow">{siteContent.workflow.eyebrow}</p>
-      <h2 id="workflow-title">{siteContent.workflow.title}</h2>
+  <section class="project-index section-shell" id="projects" aria-labelledby="projects-title">
+    <div data-reveal>
+      <p class="section-label">SELECTED WORK / 01—05</p>
+      <h2 id="projects-title">五个项目，不只是五张截图。</h2>
     </div>
-
-    <ol class="timeline-list" data-timeline>
-      <span class="timeline-rail" data-timeline-rail aria-hidden="true">
-        <i></i>
-      </span>
-      {siteContent.workflow.items.map((item) => (
-        <li data-reveal>
-          <time>{item.marker}</time>
-          <div>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <p data-reveal>每一章都用真实界面、真实架构和真实数据说明：它解决什么、如何运行、为什么值得被记住。</p>
   </section>
 
-  <section class="section projects" id="projects" aria-labelledby="projects-title">
-    <div class="section-heading wide" data-reveal>
-      <p class="eyebrow">{siteContent.sections.projects.eyebrow}</p>
-      <h2 id="projects-title">{siteContent.sections.projects.title}</h2>
-      <p>{siteContent.sections.projects.summary}</p>
+  <article class="project-chapter project-aps" id="aps-mes" data-project-section>
+    <div class="chapter-sticky">
+      <header class="chapter-copy" data-reveal>
+        <span class="chapter-number">01</span>
+        <div>
+          <p class="project-label">{apsMes.label} · {apsMes.status}</p>
+          <h2>{apsMes.title}</h2>
+          <p class="project-lede">{apsMes.summary}</p>
+          <ul class="tech-inline">{apsMes.stack.slice(0, 5).map((item) => <li>{item}</li>)}</ul>
+          <a class="text-link" href={`/projects/${apsMes.slug}/`}>完整案例 <span>↗</span></a>
+        </div>
+      </header>
+
+      <div class="aps-stage" data-reveal data-parallax-stage>
+        <figure class="screen-frame aps-screen" data-tilt>
+          <img src={apsMes.screenshots?.[0].src} alt={apsMes.screenshots?.[0].alt} loading="lazy" />
+          <figcaption>PLAN / APS</figcaption>
+        </figure>
+        <figure class="screen-frame mes-screen" data-tilt>
+          <img src={apsMes.screenshots?.[1].src} alt={apsMes.screenshots?.[1].alt} loading="lazy" />
+          <figcaption>EXECUTE / MES</figcaption>
+        </figure>
+        <div class="material-swatch" aria-hidden="true"><span>CP-SAT</span><i></i></div>
+      </div>
+    </div>
+    <ol class="manufacturing-flow" aria-label="APS 到 MES 的制造闭环" data-reveal>
+      {[
+        ["01", "订单计划"], ["02", "生产排程"], ["03", "工单下发"], ["04", "派工执行"], ["05", "质量与物料"], ["06", "结果回传"],
+      ].map((step) => <li><span>{step[0]}</span><strong>{step[1]}</strong></li>)}
+    </ol>
+  </article>
+
+  <article class="project-chapter project-review" id="reviewchecklist" data-project-section>
+    <div class="chapter-grid">
+      <div class="review-visual" data-reveal>
+        <div class="paper-tab">EVIDENCE / REVIEW</div>
+        <figure class="screen-frame review-screen" data-tilt>
+          <img src={review.screenshots?.[0].src} alt={review.screenshots?.[0].alt} loading="lazy" />
+        </figure>
+        <div class="review-metrics">
+          <span><strong>47</strong> 家企业</span>
+          <span><strong>457</strong> 条人工意见</span>
+          <span><strong>355</strong> 条一一映射</span>
+          <span><strong>102</strong> 条校验补充</span>
+        </div>
+      </div>
+      <header class="chapter-copy chapter-copy-right" data-reveal>
+        <span class="chapter-number">02</span>
+        <div>
+          <p class="project-label">{review.label} · {review.status}</p>
+          <h2>{review.title}</h2>
+          <p class="project-lede">{review.summary}</p>
+          <div class="evidence-sequence" aria-label="审评 Agent 流程">
+            <span>解析</span><i>→</i><span>检索</span><i>→</i><span>核验</span><i>→</i><span>人工复核</span>
+          </div>
+          <p class="source-boundary">公开仓库使用合成演示数据；项目交付数字来自简历中的实际工作记录。</p>
+          <a class="text-link" href="https://github.com/junfengye02-spec/ReviewChecklist" target="_blank" rel="noreferrer">查看源码 <span>↗</span></a>
+        </div>
+      </header>
+    </div>
+  </article>
+
+  <article class="project-chapter project-quant" id="quantclaw" data-project-section>
+    <header class="quant-heading section-shell" data-reveal>
+      <div class="chapter-copy">
+        <span class="chapter-number">03</span>
+        <div>
+          <p class="project-label">{quant.label} · {quant.status}</p>
+          <h2>{quant.title}</h2>
+          <p class="project-lede">{quant.summary}</p>
+        </div>
+      </div>
+      <div class="quant-note">
+        <span>PRIVATE REPOSITORY</span>
+        <p>源码不公开；这里展示 README 中允许公开的运行架构、数据流和研究依据。</p>
+      </div>
+    </header>
+
+    <div class="architecture-panel section-shell" data-reveal>
+      <div class="architecture-topline">
+        <span>PROFILE RUNNER</span><strong>backtest</strong><strong>shadow</strong><strong>paper</strong><em>LIVE DISABLED</em>
+      </div>
+      <ol class="architecture-layers" data-architecture>
+        {quantLayers.map((layer, index) => (
+          <li tabindex="0" data-layer={index}>
+            <span>{layer.no}</span>
+            <div><strong>{layer.title}</strong><small>{layer.text}</small></div>
+            <output>{layer.output}</output>
+          </li>
+        ))}
+      </ol>
+      <div class="risk-gate">
+        <span>LLM DIRECTIVE</span><i>→</i><strong>DirectiveGate</strong><i>→</i><strong>RiskOverlay</strong><i>→</i><strong>CircuitBreaker</strong><i>→</i><span>EXECUTION</span>
+      </div>
     </div>
 
-    <div class="showcase-shell">
-      <div class="project-grid featured-grid">
-        {featuredProjects.map((project) => <ProjectCard project={project} />)}
+    <div class="research-strip section-shell" data-reveal>
+      <p class="section-label">RESEARCH BASIS</p>
+      <div>
+        {papers.map((paper, index) => (
+          <a href={paper[2]} target="_blank" rel="noreferrer">
+            <span>{String(index + 1).padStart(2, "0")}</span><strong>{paper[0]}</strong><small>{paper[1]}</small><i>↗</i>
+          </a>
+        ))}
       </div>
-      <aside class="project-inspector" data-project-inspector data-reveal>
-        <span>{siteContent.sections.projects.inspector.label}</span>
-        <h3>{siteContent.sections.projects.inspector.title}</h3>
-        <p>{siteContent.sections.projects.inspector.text}</p>
-        <small>{siteContent.sections.projects.inspector.footer}</small>
+    </div>
+  </article>
+
+  <article class="project-chapter project-api" id="yven-api" data-project-section>
+    <div class="api-orbit" aria-hidden="true"><span>100亿+</span><i></i><i></i></div>
+    <header class="chapter-copy" data-reveal>
+      <span class="chapter-number">04</span>
+      <div>
+        <p class="project-label">{api.label} · {api.status}</p>
+        <h2>{api.title}</h2>
+        <p class="project-lede">{api.summary}</p>
+        <div class="api-facts">
+          <span><strong>100亿+</strong>累计 Token</span><span><strong>50+</strong>用户</span><span><strong>¥500+</strong>营收</span>
+        </div>
+        <a class="text-link" href="https://api.0000238.xyz/rankings" target="_blank" rel="noreferrer">查看实时排行榜 <span>↗</span></a>
+      </div>
+    </header>
+    <figure class="screen-frame api-screen" data-reveal data-tilt>
+      <img src={api.screenshots?.[0].src} alt={api.screenshots?.[0].alt} loading="lazy" />
+      <figcaption>LIVE RANKING / WEEKLY TOKEN USAGE</figcaption>
+    </figure>
+    <p class="api-caption" data-reveal>画面中的 1.85B 是截图时的当周用量；100 亿+ 为项目累计 Token 指标。</p>
+  </article>
+
+  <article class="project-chapter project-mise" id="mise-studio" data-project-section>
+    <div class="mise-ribbon" aria-hidden="true">SCRIPT · STORYBOARD · VISUAL · VOICE · RENDER ·</div>
+    <header class="chapter-copy section-shell" data-reveal>
+      <span class="chapter-number">05</span>
+      <div>
+        <p class="project-label">{mise.label} · {mise.status}</p>
+        <h2>{mise.title}</h2>
+        <p class="project-lede">{mise.summary}</p>
+        <ul class="tech-inline">{mise.stack.slice(0, 5).map((item) => <li>{item}</li>)}</ul>
+      </div>
+    </header>
+    <div class="mise-stage section-shell" data-reveal>
+      <figure class="screen-frame mise-screen" data-tilt>
+        <img src={mise.screenshots?.[0].src} alt={mise.screenshots?.[0].alt} loading="lazy" />
+        <figcaption>MISE STUDIO / ACTUAL WORKBENCH</figcaption>
+      </figure>
+      <aside>
+        <span>01</span><strong>场景与分镜</strong>
+        <span>02</span><strong>画面预览</strong>
+        <span>03</span><strong>时间线与配音</strong>
+        <span>04</span><strong>属性与渲染</strong>
       </aside>
     </div>
-  </section>
+  </article>
 
-  <section class="section contact" id="contact" aria-labelledby="contact-title">
-    <div class="contact-panel upgraded" data-reveal>
-      <div>
-        <p class="eyebrow">{siteContent.sections.contact.eyebrow}</p>
-        <h2 id="contact-title">{siteContent.sections.contact.title}</h2>
-        <p class="contact-summary">{siteContent.sections.contact.summary}</p>
-      </div>
-      <div class="contact-actions">
-        <a
-          class="button primary magnetic"
-          href={siteContent.sections.contact.primaryHref}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {siteContent.sections.contact.primaryLabel}
-        </a>
-        <button
-          class="button ghost magnetic"
-          type="button"
-          data-copy={siteContent.sections.contact.copyValue}
-        >
-          {siteContent.sections.contact.copyLabel}
-        </button>
-      </div>
+  <section class="experience section-shell" id="experience" aria-labelledby="experience-title">
+    <div class="section-heading" data-reveal>
+      <p class="section-label">EXPERIENCE / 2025—NOW</p>
+      <h2 id="experience-title">实践经历</h2>
+    </div>
+    <div class="experience-list">
+      {siteContent.experience.map((item, index) => (
+        <article data-reveal>
+          <span class="experience-index">0{index + 1}</span>
+          <time>{item.period}</time>
+          <div>
+            <h3>{item.company}</h3><strong>{item.role}</strong>
+            <p>{item.summary}</p><small>{item.detail}</small><em>{item.evidence}</em>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
+
+  <section class="capabilities section-shell" id="capabilities" aria-labelledby="capabilities-title">
+    <div class="section-heading" data-reveal>
+      <p class="section-label">CAPABILITIES</p>
+      <h2 id="capabilities-title">能力矩阵</h2>
+    </div>
+    <div class="skill-grid">
+      {siteContent.skills.map((skill) => (
+        <article data-reveal>
+          <h3>{skill.label}</h3>
+          <ul>{skill.items.map((item) => <li>{item}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="education section-shell" aria-labelledby="education-title" data-reveal>
+    <p class="section-label">EDUCATION</p>
+    <div>
+      <h2 id="education-title">{siteContent.education.school}</h2>
+      <p>{siteContent.education.degree}</p><time>{siteContent.education.period}</time>
+    </div>
+  </section>
+
+  <footer class="contact" id="contact" aria-labelledby="contact-title">
+    <canvas class="footer-canvas" data-footer-canvas aria-hidden="true"></canvas>
+    <div class="section-shell contact-inner" data-reveal>
+      <p class="section-label">LET'S BUILD SOMETHING USEFUL</p>
+      <h2 id="contact-title">一起把复杂问题，<br />做成<span>可用</span>系统。</h2>
+      <div class="contact-links">
+        <a href={siteContent.contact.github} target="_blank" rel="noreferrer">GitHub <i>↗</i></a>
+        <a href={`mailto:${siteContent.contact.email}`}>Email <i>↗</i></a>
+        <a href={siteContent.contact.resume} target="_blank">下载简历 <i>↓</i></a>
+      </div>
+      <div class="contact-signoff"><span>YE JUNFENG / 叶峻枫</span><span>GUANGZHOU · 2026</span></div>
+    </div>
+  </footer>
 </BaseLayout>

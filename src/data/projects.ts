@@ -1,44 +1,14 @@
-// 以后调整作品展示，主要改这个文件：
-// - title / summary：卡片标题和简介
-// - description：详情页长描述
-// - stack：标签
-// - role / caseStudy：详情页里的角色、负责模块、技术难点和上线结果
-// - highlights：详情页里的真实观察/补充说明
+export type ProjectCategory = "industrial" | "agent" | "ai" | "creative";
+export type ProjectAccent = "forest" | "oxblood" | "brass" | "ink";
 
-// - screenshots：详情页截图；第一张也会作为作品卡片缩略图
-// - access：访问状态，比如“需登录”或“公开访问”
-// - links：详情页按钮；external 为 true 会打开新标签
-// - featured：true 会进入首页精选
-// 列表顺序就是作品库展示顺序。
-
-export type ProjectCategory = "industrial" | "ai";
-export type ProjectAccent = "lime" | "coral" | "cyan" | "ink";
-
-export type ProjectLink = {
-  label: string;
-  href: string;
-  external?: boolean;
-};
-
-export type ProjectScreenshot = {
-  src: string;
-  alt: string;
-  caption: string;
-};
-
+export type ProjectLink = { label: string; href: string; external?: boolean };
+export type ProjectScreenshot = { src: string; alt: string; caption: string };
 export type ProjectCaseStudy = {
   role: string;
   modules: string[];
   challenges: string[];
   outcomes: string[];
 };
-
-export type ProjectDemoAccount = {
-  username: string;
-  password: string;
-  note?: string;
-};
-
 export type Project = {
   slug: string;
   title: string;
@@ -51,183 +21,155 @@ export type Project = {
   summary: string;
   description: string;
   stack: string[];
-  caseStudy?: ProjectCaseStudy;
-  demoAccount?: ProjectDemoAccount;
   access?: string;
   highlights?: string[];
   screenshots?: ProjectScreenshot[];
+  caseStudy?: ProjectCaseStudy;
   links: ProjectLink[];
   featured?: boolean;
 };
 
 export const projects: Project[] = [
   {
-    slug: "titan-aps",
-    title: "Titan APS",
+    slug: "aps-mes",
+    title: "APS × MES",
     category: "industrial",
-    label: "APS",
+    label: "制造协同系统",
+    status: "Open Source",
+    accent: "forest",
+    year: "2026",
+    metric: "从计划排程到车间执行",
+    summary: "将高级计划排程与制造执行合成一条业务链：订单计划、CP-SAT 排程、工单下发、派工执行、质量与物料回传。",
+    description: "这不是两个并排的管理后台，而是一条从计划到执行再回传的制造闭环。APS 用 Google OR-Tools CP-SAT 建模工序前后关系、资源互斥、交期与工厂日历；MES 承接工单、派工、质量、物料和现场异常，再通过消息与回调把执行状态反馈给计划层。",
+    stack: ["OR-Tools CP-SAT", "Spring Cloud", "Vue 3", "Spring Boot", "MyBatis Plus", "RocketMQ"],
+    access: "两个公开源码仓库 · 真实联调截图",
+    screenshots: [
+      { src: "/project-shots/aps-gantt-actual.png", alt: "Titan APS 真实排程甘特图", caption: "APS 排程工作台：订单、资源利用率、交期指标与甘特图联动。" },
+      { src: "/project-shots/mes-workorders-actual.png", alt: "MES 真实生产工单页面", caption: "MES 生产工单：承接排程结果并进入派工、质量与物料执行。" },
+      { src: "/project-shots/aps-load-actual.png", alt: "Titan APS 真实资源负荷页面", caption: "资源负荷视图：用真实负载验证计划可执行性。" },
+    ],
+    caseStudy: {
+      role: "全栈与业务建模：从制造流程拆解、排程约束建模、前后端实现，到 APS/MES 数据契约和联调验证。",
+      modules: ["订单计划 → 生产计划 → 工单下发 → 派工执行 → 质量管控 → 物料流转。", "基于 CP-SAT 表达工序依赖、资源互斥、工厂日历、交期与重新排程。", "APS 结果写回 MES 工单与派工任务，MES 通过回调反馈库存、质量和执行异常。"],
+      challenges: ["计划层追求整体最优，执行层面对实时变化，两者需要可重算、可追溯的数据边界。", "插单、设备停机、交期变更和物料未齐套会同时影响交期与资源冲突。", "长链路状态流转要处理消息幂等、失败重试、权限控制和异常恢复。"],
+      outcomes: ["形成覆盖订单、工单、派工、质量、物料与资源数据的双子系统。", "在甘特图、资源负荷与工单工作台中保留可验证的真实运行界面。", "两个公开仓库分别提供 APS 排程引擎与 MES 制造执行源码。"],
+    },
+    highlights: ["调度引擎不是固定规则演示，而是面向多约束组合的 CP-SAT 求解模型。", "MES 不止 CRUD：包含工单状态机、派工、质量、物料和 APS 集成边界。", "以可重排、可回传、可审计为核心，把计划与执行做成闭环。"],
+    links: [
+      { label: "APS GitHub", href: "https://github.com/junfengye02-spec/aps-ye", external: true },
+      { label: "MES GitHub", href: "https://github.com/junfengye02-spec/mes-ye", external: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: "reviewchecklist",
+    title: "ReviewChecklist",
+    category: "agent",
+    label: "AI 审评平台",
+    status: "Open Source",
+    accent: "oxblood",
+    year: "2026",
+    metric: "结论可定位、可复核、可恢复",
+    summary: "面向招投标文件的审评分工系统：把解析、证据定位、AI 判断、规则校验与人工复核串成可恢复的 Agent 工作流。",
+    description: "ReviewChecklist 解决的不是‘让模型读一份 PDF’，而是让审评结论有证据、有规则、有状态。LangGraph 串联文件解析、混合检索、证据核验、要点抽取、规则比对和报告写入；异常任务转人工并保留检查点，避免长流程失败后从头开始。",
+    stack: ["LangGraph", "FastAPI", "PyMuPDF", "BM25 + Vector + RRF", "MySQL", "MinIO"],
+    access: "公开源码使用合成演示数据 · 项目交付数据来自简历",
+    screenshots: [
+      { src: "/project-shots/reviewchecklist-evidence.png", alt: "ReviewChecklist 真实证据复核工作台", caption: "证据复核：原文片段、定位信息、校验状态与人工确认并排呈现。" },
+      { src: "/project-shots/reviewchecklist-workbench.png", alt: "ReviewChecklist 真实任务工作台", caption: "可恢复工作流：阶段进度、任务检查点与人工复核入口。" },
+    ],
+    caseStudy: {
+      role: "负责审评工作台的完整链路：Excel/ZIP/Word 数据导入、证据检索、人工意见匹配、审评要点优化、复核和结果回写。",
+      modules: ["LangGraph 编排解析、检索、判断、校验、人工复核和结果写入。", "PyMuPDF 按页解析，结合 BM25、向量检索与 RRF 定位跨章节证据。", "FastAPI + MySQL + MinIO 异步任务服务，以检查点支持重试、取消与故障接管。"],
+      challenges: ["错误结论必须能回到页码、章节和原文片段，不能只给不可解释的模型答案。", "长文档、多规则与多轮优化会放大超时和级联错误，需要人工复核闸门。", "确定性工具负责日期、金额和数量校验，模型只处理语义判断。"],
+      outcomes: ["项目交付处理 47 家企业、457 条人工审评意见。", "完成 355 条一一映射，并补充 102 条校验结果与人工确认。", "公开仓库明确标注合成/临时演示边界，不包含真实招标或审批数据。"],
+    },
+    highlights: ["把检索命中变成可核验证据，而不是把相似片段直接当答案。", "AI 结论、工具校验与人工复核三条路径都留有状态和恢复点。", "用受控优化回路改进审评要点，避免未经确认的结果直接覆盖生产数据。"],
+    links: [{ label: "GitHub 源码", href: "https://github.com/junfengye02-spec/ReviewChecklist", external: true }],
+    featured: true,
+  },
+  {
+    slug: "quantclaw",
+    title: "QuantClaw",
+    category: "ai",
+    label: "私有量化研究框架",
+    status: "Private · Architecture",
+    accent: "brass",
+    year: "2026",
+    metric: "研究、决策、执行与风控分层",
+    summary: "五层量化框架把市场情报、因子发现、多智能体决策、确定性执行与 MLOps 连接起来；Live 默认关闭。",
+    description: "QuantClaw 把 LLM 放在适合它的位置：生成假设、阅读世界状态、进行多视角辩论；把仓位、止损、熔断和执行放进确定性闸门。框架通过 Pydantic 契约和 ZeroMQ 连接五层运行时，并支持 backtest、shadow、paper 三种模式。私有源码不公开，只展示 README 允许公开的架构与研究依据。",
+    stack: ["Python", "Pydantic", "ZeroMQ", "Backtest", "Multi-Agent", "MLOps"],
+    access: "私有仓库 · 仅展示 README 架构和公开研究依据",
+    caseStudy: {
+      role: "独立设计可复用研究框架：定义五层运行时、跨层消息契约、Profile Runner、风险闸门与评估闭环。",
+      modules: ["Intelligence：市场、新闻、宏观与监管信息汇聚为 WorldStateVector。", "Alpha + Committee：LLM 因子假设、沙箱筛选、Bull/Bear/Quant/Risk 多智能体辩论。", "Execution + MLOps：DirectiveGate、RiskOverlay、CircuitBreaker、TWAP/VWAP 与因子衰减监测。"],
+      challenges: ["LLM 指令同时包含噪声和潜在 Alpha，必须与可证明的风险规则隔离。", "研究、回测与执行要共享契约，但不能让实验组件绕过风控直接触达 Live。", "因子有效性会随市场状态衰减，需要 walk-forward、shadow 与持续评估。"],
+      outcomes: ["形成 Intelligence / Alpha / Committee / Execution / MLOps 五层架构。", "支持 backtest、shadow、paper；Live 默认禁用，执行前必须经过确定性风险闸门。", "研究路径参考 TradingAgents、Qlib、RD-Agent、FinRL 与多篇公开论文。"],
+    },
+    highlights: ["多智能体讨论不等于可交易指令：Risk Officer 与 DirectiveGate 拥有独立否决权。", "Alpha 假设先进入隔离沙箱、快速筛选与 walk-forward，再决定是否进入影子组合。", "参考 TradingAgents、Microsoft Qlib / RD-Agent 与 FinRL，但运行时和风控边界独立设计。"],
+    links: [
+      { label: "GitHub 主页", href: "https://github.com/junfengye02-spec", external: true },
+      { label: "TradingAgents", href: "https://github.com/TauricResearch/TradingAgents", external: true },
+      { label: "Microsoft Qlib", href: "https://github.com/microsoft/qlib", external: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: "yven-api",
+    title: "Yven API",
+    category: "ai",
+    label: "统一模型网关",
     status: "Live",
     accent: "ink",
     year: "2026",
-    metric: "高级计划排程",
-    summary: "Spring Cloud + OR-Tools 的高级计划排程系统，已上线，覆盖订单、资源、排程、AI 助手和 MES 联动。",
-    description:
-      "Titan APS 是面向离散制造排产的高级计划排程系统。源码显示它不是单纯的前端演示，而是包含 Spring Cloud Gateway、订单服务、排程服务、资源服务、用户服务和 FastAPI AI 服务的微服务系统；核心排程使用 OR-Tools CP-SAT 建模资源互斥、工序依赖、BOM 展开和正向/JIT 排程目标，前端用 Vue 3、Element Plus、dhtmlx-gantt、ECharts 和 AntV X6 做甘特图、资源负荷、库存推移、工艺路线和 What-If 可视化。",
-    stack: ["Vue 3", "Spring Cloud", "OR-Tools CP-SAT", "FastAPI", "RocketMQ", "Seata"],
-    access: "需登录查看内页",
-    demoAccount: {
-      username: "admin",
-      password: "Admin@12345",
-      note: "演示测试账号，仅用于查看线上演示环境。",
-    },
-    caseStudy: {
-      role:
-        "全栈与系统实现：从制造排程业务建模、微服务拆分、排程引擎、前端甘特图工作台，到 AI 助手、部署文档和上线验证链路都由你主导推进。",
-      modules: [
-        "排程核心：实现订单、工序、资源、工厂日历、任务分段、BOM 递归和外协工序等制造排程模型。",
-        "微服务后台：拆分 Gateway、Order、Schedule、Resource、User、AI Service，并通过 Nacos、Feign、RocketMQ、Seata、Sentinel 组织服务治理和事务边界。",
-        "前端工作台：建设排程甘特图、订单管理、资源管理、库存推移、资源负荷、工艺路线图、What-If 模拟和 AI 助手入口。",
-        "AI 助手：基于 FastAPI + LangChain，将排程查询、资源查询、风险提示和需确认的写操作接入对话式工作流。",
-      ],
-      challenges: [
-        "排程问题是典型 NP-Hard 场景，需要把资源互斥、工序前后约束、交期、提前量、工厂日历和库存短缺转成可求解模型。",
-        "甘特图既要表达订单层级、任务分段和交期标记，又要在大数据量下保持滚动、缩放和筛选体验。",
-        "排程结果会影响订单状态、库存扣减、告警和 MES 回调，需要处理跨服务事务、消息重试和失败降级。",
-        "AI 写操作不能直接执行，需要做 PendingAction、风险等级和用户确认，避免智能助手误改生产数据。",
-      ],
-      outcomes: [
-        "已部署到线上域名，可从个人站进入登录页和真实排程内页截图。",
-        "本地源码包含 30+ Controller、400+ REST 映射，覆盖订单、物料、库存、资源、排程、Pegging、What-If、导入导出和 AI 服务。",
-        "项目文档记录了 105/105 单测通过、后续单测增强、E2E/契约审计、K8s/Docker/监控/密钥治理等生产化工作。",
-        "整体从前端甘特图到后端排程引擎、从服务治理到上线验证，构成一条完整的工业系统交付链路。",
-      ],
-    },
-    highlights: [
-      "README 明确覆盖正向排程、JIT 逆向排程、瓶颈排程、模拟退火、OR-Tools CP-SAT 和 What-If 模拟。",
-      "前端真实页面包含排程甘特图、指标卡、资源利用率趋势、订单任务时间轴和资源筛选。",
-      "GitHub 源码已公开，可按微服务、排程引擎、AI Service 逐层进入阅读。",
-    ],
+    metric: "累计 100 亿+ Token",
+    summary: "面向开发者的多模型 API 网关：统一协议、模型路由、用量计量与实时排行榜，累计服务 50+ 用户。",
+    description: "Yven API 将 GPT、Claude、Gemini 等模型入口统一到一套开发者接口，并围绕上游路由、兼容协议、调用计量和模型排行构建产品体验。项目目前累计 Token 使用量超过 100 亿，服务 50+ 用户，累计营收超过 ¥500。排行榜截图来自真实线上页面，展示的是当周用量；累计指标来自项目运营数据。",
+    stack: ["Go", "Gin", "OAuth", "Model Routing", "OpenAI Compatible", "Usage Metering"],
+    access: "公开访问 · 真实排行榜截图",
     screenshots: [
-      {
-        src: "/project-shots/titan-aps-gantt.png",
-        alt: "Titan APS 排程甘特图真实内页截图",
-        caption: "登录后的排程甘特图：指标卡、资源利用率趋势和订单任务时间轴。",
-      },
+      { src: "/project-shots/yven-api-rankings.png", alt: "Yven API 真实 Token 排行榜", caption: "线上排行榜：当周 Token 用量、模型分布和增长趋势实时更新。" },
+      { src: "/project-shots/yven-api-home.png", alt: "Yven API 真实产品首页", caption: "统一 AI 网关首页：协议兼容、模型接入与开发者入口。" },
     ],
+    caseStudy: {
+      role: "产品化与网关集成：把多模型代理、账号池和用量数据组织成可访问、可计量、可运营的开发者产品。",
+      modules: ["统一 OpenAI 兼容入口，处理多模型请求/响应转换、流式输出与工具调用。", "按 Provider 与模型做路由、账号池调度、故障切换和调用统计。", "将 Token 计量、模型用量和增长趋势转成公开排行榜。"],
+      challenges: ["不同模型协议、限额和流式行为不一致，需要稳定转换和 fallback。", "计量既要对开发者透明，也要支撑运营、成本判断与排行榜更新。", "高用量下需要控制路由延迟、上游失败和账号池热点。"],
+      outcomes: ["项目运营数据：累计 100 亿+ Token、50+ 用户、¥500+ 累计营收。", "真实线上排行榜可按今天、本周、本月与今年查看模型用量。", "当前截图中的 1.85B 为拍摄时的当周用量，不与累计指标混淆。"],
+    },
+    highlights: ["100 亿+ 是累计 Token 指标；页面截图以当周数据展示模型分布。", "排行不是静态宣传图，而是直接来自生产计量数据。", "产品价值同时覆盖开发者接入体验与网关运营可观测性。"],
     links: [
-      { label: "访问线上（需登录）", href: "https://aps.0000238.xyz/", external: true },
-      { label: "GitHub 源码", href: "https://github.com/junfengye02-spec/aps-ye", external: true },
+      { label: "访问 Yven API", href: "https://api.0000238.xyz/", external: true },
+      { label: "查看排行榜", href: "https://api.0000238.xyz/rankings", external: true },
     ],
     featured: true,
   },
   {
-    slug: "mes-manufacturing-system",
-    title: "MES 制造执行系统",
-    category: "industrial",
-    label: "MES",
-    status: "Live",
-    accent: "cyan",
+    slug: "mise-studio",
+    title: "Mise Studio",
+    category: "creative",
+    label: "OpenMontage 二开",
+    status: "In Development",
+    accent: "oxblood",
     year: "2026",
-    metric: "车间执行系统",
-    summary: "Vue 3 + Spring Boot 的 MES 制造执行系统，已上线，覆盖计划、工单、派工、质量、物料和 APS 集成。",
-    description:
-      "MES 制造执行系统面向离散制造车间，覆盖从订单计划、生产计划、生产工单、派工执行、质量管控、异常联络、物料出入库到 APS 集成的完整执行链路。源码采用 Vue 3 + TypeScript + Element Plus 前端和 Spring Boot 3 + MyBatis Plus 多模块后端，包含基础数据、班组、工艺、计划、工单、派工、异常、质量、查询、物料、APS 集成、系统权限等业务域。",
-    stack: ["Vue 3", "TypeScript", "Spring Boot", "MyBatis Plus", "JWT/RBAC", "APS Integration"],
-    access: "需登录查看内页",
-    demoAccount: {
-      username: "admin",
-      password: "admin123",
-      note: "演示测试账号，仅用于查看线上演示环境。",
-    },
+    metric: "多智能体视频生成工作台",
+    summary: "把故事、分镜、素材、预览、配音和时间线放在同一工作台，让视频生成从一次 Prompt 变成可编辑流程。",
+    description: "Mise Studio 是基于 OpenMontage 二次开发的视频生成网站。界面围绕真实创作路径设计：左侧组织场景和分镜，中间预览当前镜头，下方编辑视频/音频时间线，右侧调整画面与素材属性；后端通过多智能体协作完成研究、脚本、图像、视频、配音与合成。",
+    stack: ["FastAPI", "React", "Remotion", "FFmpeg", "Multi-Agent", "Storyboarding"],
+    access: "本地二开项目 · 展示真实前端工作台",
+    screenshots: [{ src: "/project-shots/mise-studio-workbench.png", alt: "Mise Studio 真实视频工作台界面", caption: "真实工作台：场景列表、预览、时间线、配音轨与属性面板。" }],
     caseStudy: {
-      role:
-        "全栈与业务架构实现：负责从 MES 业务域拆分、后端模块、前端页面、权限体系、APS 对接，到生产就绪整改和上线验收资料的整体落地。",
-      modules: [
-        "业务模块：基础数据、班组、工艺、计划、生产工单、生产派工、异常联络单、质量、工作查询、物料管理和系统管理。",
-        "工单与派工：实现工单生命周期、工单详情子表、人员/设备/班组派工、派工撤销和状态流转。",
-        "APS 集成：实现同步配置、同步日志、数据映射、回调接收、HMAC 签名、幂等处理和外部请求追踪。",
-        "前端工程：建设 40+ 业务视图、按域拆分 API、通用 DataTable/SearchForm/ImportDialog 组件、Pinia 权限状态和动态菜单。",
-      ],
-      challenges: [
-        "MES 业务链路长，订单计划、生产计划、工单、派工、质量、物料之间存在大量 DTO/VO/Entity 契约对齐问题。",
-        "派工是现场执行核心，需要补齐创建、更新、分配、撤销、开工、完工等写接口，并做状态机和冲突校验。",
-        "系统要对外接 APS，回调接口不能只靠 permitAll，需要 HMAC-SHA256、API Key、时间戳和 Redis 幂等保护。",
-        "管理后台必须同时考虑角色权限、按钮权限、审计日志、Refresh Token 轮转、生产密钥校验和部署可恢复性。",
-      ],
-      outcomes: [
-        "已部署到线上域名，可从个人站进入登录页和真实物料档案内页截图。",
-        "GitHub 仓库公开，包含 mes-frontend、mes-backend、monitoring、Docker Compose、HA、微服务和运维文档。",
-        "M8 终验报告记录：25 个后端模块 verify 通过、220 个单测通过、15 条 Playwright E2E、P0/P1 整改项 100% 落地。",
-        "项目从普通 CRUD 后台升级为可讲生产流程、权限安全、APS 联动和上线治理的完整制造执行案例。",
-      ],
+      role: "在 OpenMontage 基础上进行产品化二开，重组视频生成流程、工作台信息架构和多智能体协作边界。",
+      modules: ["创作输入：主题、研究素材与脚本结构。", "分镜生产：场景拆分、画面提示、素材生成与镜头预览。", "后期工作台：时间线、音轨、属性调整、渲染与交付。"],
+      challenges: ["生成式视频不是单次请求，需要管理场景、素材、版本、时长和依赖。", "图像、视频、配音与字幕任务耗时不同，必须用可追踪的异步编排串联。", "界面要兼顾自动生成与人工编辑，让每一步都能预览、替换和重做。"],
+      outcomes: ["完成从故事板到时间线的可视化工作台，真实界面已纳入作品展示。", "以 Agent、Remotion 与 FFmpeg 组织内容生成和最终渲染链路。", "项目使用 Mise Studio 产品名，并保留 OpenMontage 二开来源说明。"],
     },
-    highlights: [
-      "源码 README 显示它覆盖订单计划、生产工单、派工调度、质量管控、物料管理和 APS 外部系统集成。",
-      "登录后能看到完整左侧业务导航：基础数据、工艺管理、计划管理、生产工单、生产派工、质量、物料和 APS 集成。",
-      "从基础数据到派工、质量、物料和外部集成，是一条覆盖车间真实业务流的后台系统。",
-    ],
-    screenshots: [
-      {
-        src: "/project-shots/mes-materials.png",
-        alt: "MES 制造执行系统物料档案真实内页截图",
-        caption: "登录后的物料档案页：业务导航、筛选表单、物料表格和分页区域。",
-      },
-    ],
+    highlights: ["把生成过程拆成可编辑镜头，而不是只交付一个不可修改的视频文件。", "时间线同时表达画面、音轨与片段长度，适合人工介入和局部重生成。", "真实工作台截图直接展示前端使用方式，不用概念图代替产品。"],
     links: [
-      { label: "访问线上（需登录）", href: "https://mesmac.0000238.xyz/", external: true },
-      { label: "GitHub 源码", href: "https://github.com/junfengye02-spec/mes-ye", external: true },
+      { label: "GitHub 源码", href: "https://github.com/junfengye02-spec/video", external: true },
+      { label: "OpenMontage", href: "https://github.com/OpenMontage/OpenMontage", external: true },
     ],
-    featured: true,
-  },
-  {
-    slug: "sub2api",
-    title: "Sub2API",
-    category: "ai",
-    label: "AI Gateway",
-    status: "Live",
-    accent: "lime",
-    year: "2026",
-    metric: "统一 API 网关",
-    summary: "AI API 网关产品，面向 Claude、GPT、Gemini、Codex 等模型做统一接口、账号池和路由调度。",
-    description:
-      "Sub2API 是一个面向开发者的 AI API 网关产品，核心价值是把多种订阅、账号池和模型后端包装成统一 API 入口。结合本地 CLIProxyAPI 源码可以看到，它覆盖 OpenAI/Gemini/Claude/Codex 兼容接口、OAuth 登录、多账号轮询、模型路由、流式/非流式响应、WebSocket、工具调用、多模态输入和管理接口等能力。",
-    stack: ["Go", "Gin", "OAuth", "OpenAI Compatible API", "Model Routing", "WebSocket"],
-    access: "公开首页",
-    caseStudy: {
-      role:
-        "产品化与网关集成实现：负责把多模型代理能力包装成可访问、可理解、可演示的 AI API Gateway，并围绕开发者调用场景组织首页、模型支持、调用示例和访问入口。",
-      modules: [
-        "统一接口：提供 OpenAI/Gemini/Claude/Codex 兼容 API，降低不同模型协议之间的接入成本。",
-        "账号与路由：支持 OAuth 登录、多账号轮询、模型别名、Provider Routing 和自动 fallback。",
-        "开发者能力：支持流式响应、非流式响应、WebSocket、工具调用、多模态输入和本地 SDK 嵌入。",
-        "管理与部署：围绕配置文件、Docker、Management API、日志和使用统计队列做自托管网关形态。",
-      ],
-      challenges: [
-        "不同模型家族的请求/响应协议不一致，需要在 OpenAI、Gemini、Claude、Codex 等格式之间做转换和兼容。",
-        "多账号池要处理轮询、失效账号、配额、模型映射和 fallback，避免某个上游失败影响整体可用性。",
-        "AI 编程工具依赖流式输出和工具调用，网关需要兼容 Claude Code、Codex、Gemini CLI 等客户端行为。",
-        "产品页要把复杂代理能力讲成人能快速理解的价值：统一 Key、统一入口、上游调度和按量使用。",
-      ],
-      outcomes: [
-        "已部署公开首页，用户无需登录就能了解产品定位、调用方式和支持模型。",
-        "本地源码显示网关基于 Go/Gin 实现，并包含 auth、management、translator、registry、SDK、watcher、logging 等模块。",
-        "CLIProxyAPI 上游 GitHub 已有 31k+ Star，方向贴合 AI agent、coding tool 和自托管网关的实际需求。",
-        "与 APS / MES 在定位上互补：一边是重业务的工业系统，一边是面向开发者的 AI 基础设施。",
-      ],
-    },
-    highlights: [
-      "首页直接解释核心价值：统一 API、账号池调度、会话保持和开发者调用。",
-      "终端代码块呈现真实的 curl 调用示例，直接对上开发者的使用场景。",
-      "模型支持区展示 Claude、GPT、Gemini、Codex、Antigravity 等接入状态，信息密度贴近产品页。",
-    ],
-    screenshots: [
-      {
-        src: "/project-shots/sub2api-home.png",
-        alt: "Sub2API AI API Gateway 首页截图",
-        caption: "公开首页：订阅转 API、终端调用示意、功能卡片和已支持模型。",
-      },
-    ],
-    links: [{ label: "访问线上（公开）", href: "https://api.0000238.xyz/", external: true }],
     featured: true,
   },
 ];
@@ -235,5 +177,7 @@ export const projects: Project[] = [
 export const categoryLabels: Record<ProjectCategory | "all", string> = {
   all: "全部",
   industrial: "工业系统",
-  ai: "AI",
+  agent: "Agent / RAG",
+  ai: "AI 产品",
+  creative: "创作工具",
 };
