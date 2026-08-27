@@ -7,7 +7,7 @@ export const siteContent = {
     },
     projects: {
       title: "项目作品 | 叶峻枫",
-      description: "APS × MES、ReviewChecklist、QuantClaw、Yven API 与 Mise Studio 项目案例。",
+      description: "ReviewChecklist、APS × MES、QuantClaw、Adaptive Interview Coach、Yven API 与 Mise Studio 项目案例。",
     },
   },
   hero: {

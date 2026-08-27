@@ -1,14 +1,27 @@
 import {
+  ACESFilmicToneMapping,
   AdditiveBlending,
+  AmbientLight,
   BufferAttribute,
   BufferGeometry,
+  CatmullRomCurve3,
   Color,
+  DirectionalLight,
+  DoubleSide,
   Line,
   LineBasicMaterial,
+  Mesh,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
   PerspectiveCamera,
+  PlaneGeometry,
   Points,
   PointsMaterial,
   Scene,
+  SphereGeometry,
+  SRGBColorSpace,
+  TubeGeometry,
+  Vector3,
   WebGLRenderer,
 } from "three";
 
@@ -78,6 +91,20 @@ function setupTilt() {
       frame.style.setProperty("--ry", "0deg");
     });
   });
+  document.querySelectorAll<HTMLElement>("[data-paper-tilt]").forEach((paper) => {
+    paper.addEventListener("pointermove", (event) => {
+      if (motionDisabled) return;
+      const rect = paper.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      paper.style.setProperty("--prx", `${(0.5 - y) * 2.2}deg`);
+      paper.style.setProperty("--pry", `${(x - 0.5) * 2.6}deg`);
+    });
+    paper.addEventListener("pointerleave", () => {
+      paper.style.setProperty("--prx", "0deg");
+      paper.style.setProperty("--pry", "0deg");
+    });
+  });
 }
 
 function setupMagnetic() {
@@ -133,8 +160,65 @@ function makeRouteCanvas(canvas: HTMLCanvasElement, palette: string[], density: 
   const scene = new Scene();
   const camera = new PerspectiveCamera(45, 1, 0.1, 100);
   const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.45));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
+  renderer.outputColorSpace = SRGBColorSpace;
+  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   camera.position.z = 7;
+
+  scene.add(new AmbientLight(0xfff5de, 1.75));
+  const key = new DirectionalLight(0xfff0d0, 3.2);
+  key.position.set(-4, 6, 7);
+  scene.add(key);
+  const rim = new DirectionalLight(0x8fb9aa, 2.4);
+  rim.position.set(5, -2, 4);
+  scene.add(rim);
+
+  const paperGeometry = new PlaneGeometry(5.2, 3.25, 34, 22);
+  const paperPosition = paperGeometry.getAttribute("position") as BufferAttribute;
+  for (let index = 0; index < paperPosition.count; index += 1) {
+    const x = paperPosition.getX(index);
+    const y = paperPosition.getY(index);
+    const edgeLift = Math.pow(Math.abs(x) / 2.6, 2) * 0.26;
+    paperPosition.setZ(index, Math.sin(x * 1.15) * 0.12 + Math.cos(y * 1.8) * 0.045 + edgeLift);
+  }
+  paperGeometry.computeVertexNormals();
+  const paper = new Mesh(paperGeometry, new MeshPhysicalMaterial({
+    color: 0xeee4d0,
+    roughness: 0.84,
+    metalness: 0,
+    clearcoat: 0.1,
+    clearcoatRoughness: 0.72,
+    side: DoubleSide,
+    transparent: true,
+    opacity: 0.5,
+  }));
+  paper.position.set(1.25, 0.08, -1.05);
+  paper.rotation.set(-0.18, -0.38, -0.08);
+  scene.add(paper);
+
+  const curvePoints = Array.from({ length: 9 }, (_, index) => {
+    const t = index / 8;
+    return new Vector3(-3.7 + t * 7.4, Math.sin(t * 6.2 - 0.8) * 1.32, 0.35 + Math.cos(t * 7.4) * 0.3);
+  });
+  const routeCurve = new CatmullRomCurve3(curvePoints);
+  const tube = new Mesh(
+    new TubeGeometry(routeCurve, 120, 0.018, 7, false),
+    new MeshStandardMaterial({ color: palette[0], roughness: 0.42, metalness: 0.5, transparent: true, opacity: 0.56 })
+  );
+  scene.add(tube);
+
+  const nodeGeometry = new SphereGeometry(window.innerWidth < 720 ? 0.055 : 0.07, 18, 18);
+  const nodeMaterial = new MeshStandardMaterial({ color: 0xb89a5e, roughness: 0.28, metalness: 0.86 });
+  const nodeCount = window.innerWidth < 720 ? 6 : 14;
+  const nodes: Mesh[] = [];
+  for (let index = 0; index < nodeCount; index += 1) {
+    const node = new Mesh(nodeGeometry, nodeMaterial);
+    node.position.copy(routeCurve.getPoint(index / Math.max(nodeCount - 1, 1)));
+    node.position.z += 0.06;
+    nodes.push(node);
+    scene.add(node);
+  }
 
   const colors = palette.map((hex) => new Color(hex));
   const pointCount = window.innerWidth < 720 ? Math.round(density * 0.48) : density;
@@ -217,8 +301,10 @@ function makeRouteCanvas(canvas: HTMLCanvasElement, palette: string[], density: 
       array[i3 + 1] = base[i3 + 1] + Math.sin(time * 0.0007 + phases[i]) * 0.025;
     }
     attr.needsUpdate = true;
-    scene.rotation.y = smoothX * 0.18 + Math.sin(time * 0.00016) * 0.045;
-    scene.rotation.x = smoothY * -0.12;
+    scene.rotation.y = smoothX * 0.035 + Math.sin(time * 0.00016) * 0.035;
+    scene.rotation.x = smoothY * -0.028;
+    paper.rotation.z = -0.08 + Math.sin(time * 0.00024) * 0.018;
+    nodes.forEach((node, index) => { node.scale.setScalar(1 + Math.sin(time * 0.0014 + index) * 0.12); });
     renderer.render(scene, camera);
     frame = window.requestAnimationFrame(render);
   };

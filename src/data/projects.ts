@@ -74,10 +74,6 @@ export const projects: Project[] = [
     description: "ReviewChecklist 解决的不是‘让模型读一份 PDF’，而是让审评结论有证据、有规则、有状态。LangGraph 串联文件解析、混合检索、证据核验、要点抽取、规则比对和报告写入；异常任务转人工并保留检查点，避免长流程失败后从头开始。",
     stack: ["LangGraph", "FastAPI", "PyMuPDF", "BM25 + Vector + RRF", "MySQL", "MinIO"],
     access: "公开源码使用合成演示数据 · 项目交付数据来自简历",
-    screenshots: [
-      { src: "/project-shots/reviewchecklist-evidence.png", alt: "ReviewChecklist 真实证据复核工作台", caption: "证据复核：原文片段、定位信息、校验状态与人工确认并排呈现。" },
-      { src: "/project-shots/reviewchecklist-workbench.png", alt: "ReviewChecklist 真实任务工作台", caption: "可恢复工作流：阶段进度、任务检查点与人工复核入口。" },
-    ],
     caseStudy: {
       role: "负责审评工作台的完整链路：Excel/ZIP/Word 数据导入、证据检索、人工意见匹配、审评要点优化、复核和结果回写。",
       modules: ["LangGraph 编排解析、检索、判断、校验、人工复核和结果写入。", "PyMuPDF 按页解析，结合 BM25、向量检索与 RRF 定位跨章节证据。", "FastAPI + MySQL + MinIO 异步任务服务，以检查点支持重试、取消与故障接管。"],
@@ -101,6 +97,9 @@ export const projects: Project[] = [
     description: "QuantClaw 把 LLM 放在适合它的位置：生成假设、阅读世界状态、进行多视角辩论；把仓位、止损、熔断和执行放进确定性闸门。框架通过 Pydantic 契约和 ZeroMQ 连接五层运行时，并支持 backtest、shadow、paper 三种模式。私有源码不公开，只展示 README 允许公开的架构与研究依据。",
     stack: ["Python", "Pydantic", "ZeroMQ", "Backtest", "Multi-Agent", "MLOps"],
     access: "私有仓库 · 仅展示 README 架构和公开研究依据",
+    screenshots: [
+      { src: "/project-shots/quantclaw-portfolio.png", alt: "QuantClaw 用户提供的运行账户组合曲线快照", caption: "运行账户快照：从 10 万本金开始，期间组合价值最高超过 12 万；截图由项目作者提供。" },
+    ],
     caseStudy: {
       role: "独立设计可复用研究框架：定义五层运行时、跨层消息契约、Profile Runner、风险闸门与评估闭环。",
       modules: ["Intelligence：市场、新闻、宏观与监管信息汇聚为 WorldStateVector。", "Alpha + Committee：LLM 因子假设、沙箱筛选、Bull/Bear/Quant/Risk 多智能体辩论。", "Execution + MLOps：DirectiveGate、RiskOverlay、CircuitBreaker、TWAP/VWAP 与因子衰减监测。"],
@@ -109,9 +108,36 @@ export const projects: Project[] = [
     },
     highlights: ["多智能体讨论不等于可交易指令：Risk Officer 与 DirectiveGate 拥有独立否决权。", "Alpha 假设先进入隔离沙箱、快速筛选与 walk-forward，再决定是否进入影子组合。", "参考 TradingAgents、Microsoft Qlib / RD-Agent 与 FinRL，但运行时和风控边界独立设计。"],
     links: [
+      { label: "因子指标站", href: "https://quant.0000238.xyz", external: true },
       { label: "GitHub 主页", href: "https://github.com/junfengye02-spec", external: true },
       { label: "TradingAgents", href: "https://github.com/TauricResearch/TradingAgents", external: true },
       { label: "Microsoft Qlib", href: "https://github.com/microsoft/qlib", external: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: "adaptive-interview-coach",
+    title: "Adaptive Interview Coach",
+    category: "agent",
+    label: "Job Search Codex Skill",
+    status: "Public GitHub",
+    accent: "brass",
+    year: "2026",
+    metric: "数千条岗位信息 · 持续面试辅助",
+    summary: "从最新简历出发，持续发现并核验岗位，再把有效 JD 转成角色画像、模拟面试和弱点复习队列。",
+    description: "Adaptive Interview Coach 是一个端到端求职与面试训练 Codex Skill。它通过牛客、公司官网、校招平台与公共渠道做四路岗位发现，只有详情页可核验且仍开放的职位才进入可审计 Excel；随后将有效 JD 聚类为角色画像，映射简历差距，并驱动一次一题的模拟面试、弱点讲解和 1/3/7 天间隔复习。项目已为身边同学发现、整理和筛选数千条岗位信息，并持续辅助面试准备。",
+    stack: ["Codex Skill", "Web Search", "Browser", "Python", "openpyxl", "Tasks & Automations"],
+    access: "公开 GitHub 项目 · 影响数据由项目作者提供",
+    caseStudy: {
+      role: "独立设计求职工作区、四路岗位发现、证据校验、去重合并、JD 画像、模拟面试与弱点复习闭环。",
+      modules: ["最新简历与配置进入 workspace.py，生成四渠道发现计划。", "详情页证据通过后，jobs.py 完成规范化、去重、过期检测与角色画像。", "简历 × JD 画像驱动一题一问式面试，weaknesses.py 管理弱点和间隔复习。"],
+      challenges: ["岗位聚合页经常过期或缺少关键字段，必须回到详情页核验开放状态。", "同一职位会以不同链接和标题重复出现，需要 URL 规范化、哈希 ID 与模糊去重。", "面试训练必须由真实 JD 与个人简历共同约束，不能生成泛化题库。"],
+      outcomes: ["为身边同学累计发现、整理与筛选数千条岗位信息。", "用可审计 Excel 保留岗位来源、详情页证据、状态与更新时间。", "通过自动化持续更新岗位并辅助模拟面试与弱点复习。"],
+    },
+    highlights: ["Evidence first：只有详情页可验证的开放岗位才进入主表。", "JD driven：从有效岗位聚类角色画像，再映射个人简历与能力差距。", "Continuous loop：岗位增量更新、一次一题面试和 1/3/7 天弱点复习互相衔接。"],
+    links: [
+      { label: "GitHub 项目", href: "https://github.com/junfengye02-spec/JobSearchTraining_skill", external: true },
+      { label: "查看 SKILL.md", href: "https://github.com/junfengye02-spec/JobSearchTraining_skill/blob/main/SKILL.md", external: true },
     ],
     featured: true,
   },
@@ -167,6 +193,7 @@ export const projects: Project[] = [
     },
     highlights: ["把生成过程拆成可编辑镜头，而不是只交付一个不可修改的视频文件。", "时间线同时表达画面、音轨与片段长度，适合人工介入和局部重生成。", "真实工作台截图直接展示前端使用方式，不用概念图代替产品。"],
     links: [
+      { label: "访问 Mise Studio", href: "https://video.0000238.xyz", external: true },
       { label: "GitHub 源码", href: "https://github.com/junfengye02-spec/video", external: true },
       { label: "OpenMontage", href: "https://github.com/OpenMontage/OpenMontage", external: true },
     ],

@@ -3,288 +3,189 @@ import { projects } from "../data/projects";
 import { siteContent } from "../data/siteContent";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const [apsMes, review, quant, api, mise] = projects;
-const quantLayers = [
-  { no: "I", title: "Intelligence", text: "市场 / 新闻 / 宏观 / SEC", output: "WorldStateVector" },
-  { no: "II", title: "Alpha", text: "LLM 假设 / 沙箱 / Walk-forward", output: "Factor Candidates" },
-  { no: "III", title: "Committee", text: "Bull / Bear / Quant / Risk", output: "Trade Directive" },
-  { no: "IV", title: "Execution", text: "Gate / Overlay / Circuit Breaker", output: "TWAP · VWAP" },
-  { no: "V", title: "MLOps", text: "日志 / 衰减 / Prompt 演化", output: "Evaluation Loop" },
+const bySlug = (slug: string) => projects.find((project) => project.slug === slug)!;
+const review = bySlug("reviewchecklist");
+const apsMes = bySlug("aps-mes");
+const quant = bySlug("quantclaw");
+const jobSearch = bySlug("adaptive-interview-coach");
+const api = bySlug("yven-api");
+const mise = bySlug("mise-studio");
+
+const reviewFlow = [
+  { no: "01", title: "多格式解析", text: "PDF / Word / Excel / ZIP", output: "Page · Section" },
+  { no: "02", title: "混合检索", text: "BM25 + Vector + RRF", output: "Evidence Bundle" },
+  { no: "03", title: "双轨判断", text: "语义 Agent + 确定性规则", output: "Decision · Rule ID" },
+  { no: "04", title: "人工闸门", text: "页码 / 引文 / 结论复核", output: "Reviewer Sign-off" },
+  { no: "05", title: "审计回写", text: "报告写入与异常队列", output: "Traceable Report" },
 ];
+
+const quantLayers = [
+  { no: "I", title: "Intelligence", input: "市场 / 宏观 / 新闻 / 监管", duty: "把异构信号压成可追踪的世界状态", output: "WorldStateVector", basis: "OpenBB · FinGPT · SEC EDGAR" },
+  { no: "II", title: "Alpha", input: "世界状态 / 因子假设", duty: "沙箱筛选、Walk-forward 与衰减治理", output: "Factor Candidates", basis: "Qlib · RD-Agent · VectorBT" },
+  { no: "III", title: "Committee", input: "候选因子 / 当前持仓", duty: "Bull / Bear / Quant / Risk 多视角辩论", output: "Trade Directive", basis: "TradingAgents · MAD" },
+  { no: "IV", title: "Execution", input: "交易意图 / 风险约束", duty: "确定性 Gate、Overlay、熔断与执行", output: "Order · Fill Report", basis: "FinRL · Gymnasium · SB3" },
+  { no: "V", title: "MLOps", input: "运行日志 / 因子表现", duty: "衰减监测、注册表与评估闭环", output: "Evaluation Loop", basis: "Model Registry · APScheduler" },
+];
+
+const factorEvidence = [
+  { value: "32", label: "活跃因子", note: "lineage-complete · SPY daily" },
+  { value: "1.86", label: "中位 OOS Sharpe", note: "因子级 · walk-forward" },
+  { value: "0.166", label: "中位 RankIC", note: "OOS Spearman" },
+  { value: "917", label: "拦截指令", note: "冷却 / 低置信 / min-delta" },
+];
+
 const papers = [
   ["TradingAgents", "Multi-agent financial trading framework", "https://arxiv.org/abs/2412.20138"],
-  ["LLM Alpha Mining", "LLM-powered factor discovery", "https://arxiv.org/abs/2502.16789"],
-  ["MCTS Alpha Mining", "Search-based alpha discovery", "https://arxiv.org/abs/2505.11122"],
-  ["Multi-Day Turnover", "Portfolio turnover research", "https://arxiv.org/abs/2506.06356"],
+  ["Alpha Decay", "Factor discovery and decay monitoring", "https://arxiv.org/abs/2502.16789"],
+  ["RD-Agent-Quant", "Self-evolving quantitative research", "https://arxiv.org/abs/2505.15155"],
+  ["Multi-Day Turnover", "Portfolio turnover constraints", "https://arxiv.org/abs/2506.06356"],
 ];
+
+const jobFlow = ["最新简历", "四路岗位发现", "详情页证据核验", "去重与岗位画像", "JD 驱动模拟面试", "弱点复习队列"];
+const miseFlow = ["Research", "Script", "Storyboard", "Visual", "Voice", "Render"];
 ---
 
 <BaseLayout title={siteContent.pages.home.title} description={siteContent.pages.home.description} current="home">
   <section class="hero" id="top" aria-labelledby="hero-title">
     <canvas class="hero-canvas" data-hero-canvas aria-hidden="true"></canvas>
-    <div class="hero-watermark" aria-hidden="true">
-      <span>复杂</span><span>可用</span>
-    </div>
+    <div class="hero-watermark" aria-hidden="true"><span>复杂</span><span>可用</span></div>
     <div class="hero-coordinate coordinate-a" aria-hidden="true">23°07′ N</div>
     <div class="hero-coordinate coordinate-b" aria-hidden="true">113°16′ E</div>
-
     <div class="hero-copy" data-reveal>
       <p class="kicker">{siteContent.hero.eyebrow}</p>
       <h1 id="hero-title">{siteContent.hero.title}</h1>
-      <p class="hero-statement">
-        把 Agent、RAG 与 <em>复杂业务</em>，<br />做成真正<span>可用</span>的系统。
-      </p>
+      <p class="hero-statement">把 Agent、RAG 与 <em>复杂业务</em>，<br />做成真正<span>可用</span>的系统。</p>
       <p class="hero-summary">{siteContent.hero.summary}</p>
       <div class="hero-actions">
-        <a class="button button-primary magnetic" href="#projects">查看项目 <i>↘</i></a>
+        <a class="button button-primary magnetic" href="#projects">查看案例 <i>↘</i></a>
         <a class="button button-ghost magnetic" href={siteContent.contact.github} target="_blank" rel="noreferrer">GitHub <i>↗</i></a>
         <a class="button button-ghost magnetic" href={siteContent.contact.resume} target="_blank">下载简历 <i>↓</i></a>
       </div>
     </div>
-    <div class="hero-scroll" aria-hidden="true"><i></i><span>SCROLL TO EXPLORE</span></div>
+    <div class="hero-scroll" aria-hidden="true"><i></i><span>SCROLL TO EXPERIENCE</span></div>
+  </section>
+
+  <section class="experience experience-front section-shell" id="experience" aria-labelledby="experience-title">
+    <div class="section-heading" data-reveal>
+      <p class="section-label">FIELD NOTES / 2025—NOW</p>
+      <h2 id="experience-title">实践，不是背景。<br />是系统成立的证据。</h2>
+    </div>
+    <div class="experience-dossiers">
+      {siteContent.experience.map((item, index) => (
+        <article class="dossier" data-reveal data-paper-tilt>
+          <div class="dossier-spine"><span>0{index + 1}</span><time>{item.period}</time></div>
+          <div class="dossier-body">
+            <p class="dossier-kicker">{index === 0 ? "DOCUMENT INTELLIGENCE" : "MANUFACTURING DELIVERY"}</p>
+            <h3>{item.company}</h3><strong>{item.role}</strong><p>{item.summary}</p>
+            <ul>
+              {(index === 0 ? [
+                "把 OCR、RAG、Rerank 与 LangGraph 组装为可恢复的企业文档审评链路。",
+                "完成 5 类 MCP 工具与 10 个开源项目适配，负责方案验证、接口联调与回归测试。",
+                "让每条 AI 结论保留页码、章节、引文、规则与人工确认状态。",
+              ] : [
+                "跟随车间场景梳理设备台账、工单流转、质量与物料数据边界。",
+                "参与前后端接口联调、基础功能测试、异常复现与交付回归。",
+                "使用 Python 清洗 BOM / Excel 数据，为 APS × MES 闭环提供真实业务输入。",
+              ]).map((detail) => <li>{detail}</li>)}
+            </ul>
+            <div class="dossier-evidence">
+              {index === 0 ? (
+                <><span><b>47</b>企业</span><span><b>457</b>意见</span><span><b>355</b>映射</span><span><b>102</b>补充</span></>
+              ) : (
+                <><span><b>APS</b>计划</span><span><b>MES</b>执行</span><span><b>BOM</b>数据</span><span><b>QA</b>回归</span></>
+              )}
+            </div>
+            <a href={index === 0 ? "#reviewchecklist" : "#aps-mes"}>关联案例 <span>↘</span></a>
+          </div>
+        </article>
+      ))}
+    </div>
   </section>
 
   <section class="metric-ribbon" aria-label="关键数据">
     {siteContent.metrics.map((metric, index) => (
-      <div data-reveal style={`--delay:${index * 70}ms`}>
-        <strong data-count-text={metric.value}>{metric.value}</strong>
-        <span>{metric.label}</span>
-      </div>
+      <div data-reveal style={`--delay:${index * 70}ms`}><strong data-count-text={metric.value}>{metric.value}</strong><span>{metric.label}</span></div>
     ))}
   </section>
 
   <section class="profile section-shell" id="profile" aria-labelledby="profile-title">
-    <div class="profile-intro" data-reveal>
-      <p class="section-label">ABOUT / 00</p>
-      <h2 id="profile-title">从复杂流程里，<br />找出能被系统承接的结构。</h2>
-      <p>我关注的不是 Demo，而是可验证、可交付、可持续迭代的系统：有数据、有边界、有异常恢复，也有人能够真正使用。</p>
-    </div>
-    <div class="profile-grid">
-      {siteContent.profile.map((item) => (
-        <article data-reveal>
-          <span>{item.index}</span>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-        </article>
-      ))}
-    </div>
+    <div class="profile-intro" data-reveal><p class="section-label">WORKING METHOD / 00</p><h2 id="profile-title">从复杂流程里，<br />找出能被系统承接的结构。</h2><p>我关注的不是 Demo，而是可验证、可交付、可持续迭代的系统：有数据、有边界、有异常恢复，也有人能够真正使用。</p></div>
+    <div class="profile-grid">{siteContent.profile.map((item) => <article data-reveal><span>{item.index}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
   </section>
 
   <section class="project-index section-shell" id="projects" aria-labelledby="projects-title">
-    <div data-reveal>
-      <p class="section-label">SELECTED WORK / 01—05</p>
-      <h2 id="projects-title">五个项目，不只是五张截图。</h2>
-    </div>
-    <p data-reveal>每一章都用真实界面、真实架构和真实数据说明：它解决什么、如何运行、为什么值得被记住。</p>
+    <div data-reveal><p class="section-label">SELECTED SYSTEMS / 01—06</p><h2 id="projects-title">把复杂问题，<br />拆成可验证的系统。</h2></div>
+    <p data-reveal>六个案例沿着同一条方法展开：先把业务变成状态和证据，再让模型、规则与人各自站在正确的位置。</p>
   </section>
+
+  <article class="project-chapter project-review" id="reviewchecklist" data-project-section>
+    <header class="chapter-copy section-shell" data-reveal><span class="chapter-number">01</span><div><p class="project-label">{review.label} · {review.status}</p><h2>{review.title}</h2><p class="project-lede">{review.summary}</p><ul class="tech-inline">{review.stack.map((item) => <li>{item}</li>)}</ul></div></header>
+    <div class="review-blueprint section-shell" data-reveal data-paper-tilt>
+      <div class="blueprint-head"><span>TRACEABLE REVIEW PIPELINE</span><em>AI ≠ FINAL AUTHORITY</em></div>
+      <ol>{reviewFlow.map((step) => <li><span>{step.no}</span><div><strong>{step.title}</strong><small>{step.text}</small></div><output>{step.output}</output></li>)}</ol>
+      <div class="recovery-spine"><span>TASK ID</span><i>→</i><strong>CHECKPOINT</strong><i>→</i><strong>RETRY / CANCEL</strong><i>→</i><strong>EXCEPTION QUEUE</strong></div>
+      <div class="review-proof"><p>输出字段</p><span>Page</span><span>Section</span><span>Quote</span><span>Rule ID</span><span>Decision</span><span>Reviewer</span></div>
+    </div>
+    <div class="review-bottom section-shell" data-reveal>
+      <div class="review-metrics"><span><strong>47</strong> 家企业</span><span><strong>457</strong> 条人工意见</span><span><strong>355</strong> 条一一映射</span><span><strong>102</strong> 条校验补充</span></div>
+      <p>确定性工具负责日期、金额与数量；Agent 负责语义判断；人类保留最终确认权。任务以检查点恢复，失败无需从头开始。</p>
+      <a class="text-link" href="https://github.com/junfengye02-spec/ReviewChecklist" target="_blank" rel="noreferrer">查看技术实现 <span>↗</span></a>
+    </div>
+  </article>
 
   <article class="project-chapter project-aps" id="aps-mes" data-project-section>
     <div class="chapter-sticky">
-      <header class="chapter-copy" data-reveal>
-        <span class="chapter-number">01</span>
-        <div>
-          <p class="project-label">{apsMes.label} · {apsMes.status}</p>
-          <h2>{apsMes.title}</h2>
-          <p class="project-lede">{apsMes.summary}</p>
-          <ul class="tech-inline">{apsMes.stack.slice(0, 5).map((item) => <li>{item}</li>)}</ul>
-          <a class="text-link" href={`/projects/${apsMes.slug}/`}>完整案例 <span>↗</span></a>
-        </div>
-      </header>
-
+      <header class="chapter-copy" data-reveal><span class="chapter-number">02</span><div><p class="project-label">{apsMes.label} · {apsMes.status}</p><h2>{apsMes.title}</h2><p class="project-lede">{apsMes.summary}</p><ul class="tech-inline">{apsMes.stack.slice(0, 6).map((item) => <li>{item}</li>)}</ul><a class="text-link" href={`/projects/${apsMes.slug}/`}>完整案例 <span>↗</span></a></div></header>
       <div class="aps-stage" data-reveal data-parallax-stage>
-        <figure class="screen-frame aps-screen" data-tilt>
-          <img src={apsMes.screenshots?.[0].src} alt={apsMes.screenshots?.[0].alt} loading="lazy" />
-          <figcaption>PLAN / APS</figcaption>
-        </figure>
-        <figure class="screen-frame mes-screen" data-tilt>
-          <img src={apsMes.screenshots?.[1].src} alt={apsMes.screenshots?.[1].alt} loading="lazy" />
-          <figcaption>EXECUTE / MES</figcaption>
-        </figure>
+        <figure class="screen-frame aps-screen" data-tilt><img src={apsMes.screenshots?.[0].src} alt={apsMes.screenshots?.[0].alt} loading="lazy" /><figcaption>PLAN / APS</figcaption></figure>
+        <figure class="screen-frame mes-screen" data-tilt><img src={apsMes.screenshots?.[1].src} alt={apsMes.screenshots?.[1].alt} loading="lazy" /><figcaption>EXECUTE / MES</figcaption></figure>
         <div class="material-swatch" aria-hidden="true"><span>CP-SAT</span><i></i></div>
       </div>
     </div>
-    <ol class="manufacturing-flow" aria-label="APS 到 MES 的制造闭环" data-reveal>
-      {[
-        ["01", "订单计划"], ["02", "生产排程"], ["03", "工单下发"], ["04", "派工执行"], ["05", "质量与物料"], ["06", "结果回传"],
-      ].map((step) => <li><span>{step[0]}</span><strong>{step[1]}</strong></li>)}
-    </ol>
-  </article>
-
-  <article class="project-chapter project-review" id="reviewchecklist" data-project-section>
-    <div class="chapter-grid">
-      <div class="review-visual" data-reveal>
-        <div class="paper-tab">EVIDENCE / REVIEW</div>
-        <figure class="screen-frame review-screen" data-tilt>
-          <img src={review.screenshots?.[0].src} alt={review.screenshots?.[0].alt} loading="lazy" />
-        </figure>
-        <div class="review-metrics">
-          <span><strong>47</strong> 家企业</span>
-          <span><strong>457</strong> 条人工意见</span>
-          <span><strong>355</strong> 条一一映射</span>
-          <span><strong>102</strong> 条校验补充</span>
-        </div>
-      </div>
-      <header class="chapter-copy chapter-copy-right" data-reveal>
-        <span class="chapter-number">02</span>
-        <div>
-          <p class="project-label">{review.label} · {review.status}</p>
-          <h2>{review.title}</h2>
-          <p class="project-lede">{review.summary}</p>
-          <div class="evidence-sequence" aria-label="审评 Agent 流程">
-            <span>解析</span><i>→</i><span>检索</span><i>→</i><span>核验</span><i>→</i><span>人工复核</span>
-          </div>
-          <p class="source-boundary">公开仓库使用合成演示数据；项目交付数字来自简历中的实际工作记录。</p>
-          <a class="text-link" href="https://github.com/junfengye02-spec/ReviewChecklist" target="_blank" rel="noreferrer">查看源码 <span>↗</span></a>
-        </div>
-      </header>
-    </div>
+    <ol class="manufacturing-flow" aria-label="APS 到 MES 的制造闭环" data-reveal>{[["01", "订单计划"], ["02", "约束排程"], ["03", "工单下发"], ["04", "派工执行"], ["05", "质量与物料"], ["06", "反馈重排"]].map((step) => <li><span>{step[0]}</span><strong>{step[1]}</strong></li>)}</ol>
+    <div class="aps-contract section-shell" data-reveal><span>APS OUTPUT</span><i>工序 / 资源 / 开始结束 / 版本</i><b>↔</b><span>MES CALLBACK</span><i>进度 / 库存 / 质量 / 异常</i></div>
   </article>
 
   <article class="project-chapter project-quant" id="quantclaw" data-project-section>
-    <header class="quant-heading section-shell" data-reveal>
-      <div class="chapter-copy">
-        <span class="chapter-number">03</span>
-        <div>
-          <p class="project-label">{quant.label} · {quant.status}</p>
-          <h2>{quant.title}</h2>
-          <p class="project-lede">{quant.summary}</p>
-        </div>
-      </div>
-      <div class="quant-note">
-        <span>PRIVATE REPOSITORY</span>
-        <p>源码不公开；这里展示 README 中允许公开的运行架构、数据流和研究依据。</p>
-      </div>
-    </header>
-
+    <header class="quant-heading section-shell" data-reveal><div class="chapter-copy"><span class="chapter-number">03</span><div><p class="project-label">{quant.label} · {quant.status}</p><h2>{quant.title}</h2><p class="project-lede">{quant.summary}</p></div></div><div class="quant-note"><span>PRIVATE REPOSITORY</span><p>源码不公开；展示 README 允许公开的架构、研究依据与运行证据。Live 执行默认禁用。</p></div></header>
     <div class="architecture-panel section-shell" data-reveal>
-      <div class="architecture-topline">
-        <span>PROFILE RUNNER</span><strong>backtest</strong><strong>shadow</strong><strong>paper</strong><em>LIVE DISABLED</em>
-      </div>
-      <ol class="architecture-layers" data-architecture>
-        {quantLayers.map((layer, index) => (
-          <li tabindex="0" data-layer={index}>
-            <span>{layer.no}</span>
-            <div><strong>{layer.title}</strong><small>{layer.text}</small></div>
-            <output>{layer.output}</output>
-          </li>
-        ))}
-      </ol>
-      <div class="risk-gate">
-        <span>LLM DIRECTIVE</span><i>→</i><strong>DirectiveGate</strong><i>→</i><strong>RiskOverlay</strong><i>→</i><strong>CircuitBreaker</strong><i>→</i><span>EXECUTION</span>
-      </div>
+      <div class="architecture-topline"><span>PROFILE RUNNER</span><strong>backtest</strong><strong>shadow</strong><strong>paper</strong><em>LIVE DISABLED</em></div>
+      <ol class="architecture-layers">{quantLayers.map((layer) => <li><span>{layer.no}</span><div><strong>{layer.title}</strong><small>输入 · {layer.input}</small><p>{layer.duty}</p></div><output>{layer.output}</output><em>{layer.basis}</em></li>)}</ol>
+      <div class="risk-gate"><span>LLM DIRECTIVE</span><i>→</i><strong>DirectiveGate</strong><i>→</i><strong>RiskOverlay</strong><i>→</i><strong>CircuitBreaker</strong><i>→</i><span>EXECUTION</span></div>
     </div>
+    <div class="quant-evidence section-shell" data-reveal>
+      <figure class="quant-account screen-frame" data-tilt><img src="/project-shots/quantclaw-portfolio.png" alt="QuantClaw 用户提供的运行账户组合曲线快照" loading="lazy" /><figcaption>RUNNING ACCOUNT SNAPSHOT / USER PROVIDED</figcaption></figure>
+      <div class="quant-ledger"><p class="section-label">RESEARCH EVIDENCE</p><h3>运行账户最高 12 万+，<br />从 10 万本金开始。</h3><p>账户截图由项目作者提供；因子指标来自框架内可追溯记录。二者分开展示，避免把因子级统计误写成账户级收益证明。</p><div class="factor-grid">{factorEvidence.map((fact) => <div><strong>{fact.value}</strong><span>{fact.label}</span><small>{fact.note}</small></div>)}</div><a class="text-link" href="https://quant.0000238.xyz" target="_blank" rel="noreferrer">查看因子指标站 <span>↗</span></a></div>
+    </div>
+    <div class="risk-ledger section-shell" data-reveal><span><b>80%</b>总目标暴露上限</span><span><b>25%</b>单标的上限</span><span><b>3%</b>单日亏损上限</span><span><b>10%</b>回撤 / 止损阈值</span><span><b>60/60</b>运行检查通过</span></div>
+    <div class="research-strip section-shell" data-reveal><p class="section-label">RESEARCH BASIS</p><div>{papers.map((paper, index) => <a href={paper[2]} target="_blank" rel="noreferrer"><span>{String(index + 1).padStart(2, "0")}</span><strong>{paper[0]}</strong><small>{paper[1]}</small><i>↗</i></a>)}</div></div>
+    <p class="quant-caveat section-shell">说明：Sharpe 与 RankIC 为因子级、样本外 walk-forward 统计，未扣除交易成本，不代表经审计的实盘组合 Sharpe 或净收益。</p>
+  </article>
 
-    <div class="research-strip section-shell" data-reveal>
-      <p class="section-label">RESEARCH BASIS</p>
-      <div>
-        {papers.map((paper, index) => (
-          <a href={paper[2]} target="_blank" rel="noreferrer">
-            <span>{String(index + 1).padStart(2, "0")}</span><strong>{paper[0]}</strong><small>{paper[1]}</small><i>↗</i>
-          </a>
-        ))}
-      </div>
+  <article class="project-chapter project-job" id="adaptive-interview-coach" data-project-section>
+    <header class="chapter-copy section-shell" data-reveal><span class="chapter-number">04</span><div><p class="project-label">{jobSearch.label} · {jobSearch.status}</p><h2>{jobSearch.title}</h2><p class="project-lede">{jobSearch.summary}</p><ul class="tech-inline">{jobSearch.stack.slice(0, 6).map((item) => <li>{item}</li>)}</ul></div></header>
+    <div class="job-console section-shell" data-reveal data-paper-tilt>
+      <div class="skill-manifest"><span>SKILL.md</span><strong>adaptive-interview-coach</strong><p>从最新简历出发，把岗位搜集、证据核验、JD 画像、模拟面试和弱点复习收束为一个可持续运行的求职系统。</p><a href="https://github.com/junfengye02-spec/JobSearchTraining_skill" target="_blank" rel="noreferrer">PUBLIC GITHUB ↗</a></div>
+      <ol>{jobFlow.map((step, index) => <li><span>{String(index + 1).padStart(2, "0")}</span><strong>{step}</strong></li>)}</ol>
+      <div class="job-impact"><strong>数千条</strong><span>已为身边同学发现、整理与筛选的岗位信息</span><i>持续辅助面试准备</i></div>
     </div>
+    <div class="job-details section-shell" data-reveal><p><b>Evidence first</b>：只有详情页仍开放、公司与岗位可核验的记录才进入 Excel。</p><p><b>JD driven</b>：有效岗位自动聚类为角色画像，再映射简历缺口与面试题。</p><p><b>Automation</b>：全量回填后增量更新，以 1 / 3 / 7 天节奏复习弱点。</p></div>
   </article>
 
   <article class="project-chapter project-api" id="yven-api" data-project-section>
     <div class="api-orbit" aria-hidden="true"><span>100亿+</span><i></i><i></i></div>
-    <header class="chapter-copy" data-reveal>
-      <span class="chapter-number">04</span>
-      <div>
-        <p class="project-label">{api.label} · {api.status}</p>
-        <h2>{api.title}</h2>
-        <p class="project-lede">{api.summary}</p>
-        <div class="api-facts">
-          <span><strong>100亿+</strong>累计 Token</span><span><strong>50+</strong>用户</span><span><strong>¥500+</strong>营收</span>
-        </div>
-        <a class="text-link" href="https://api.0000238.xyz/rankings" target="_blank" rel="noreferrer">查看实时排行榜 <span>↗</span></a>
-      </div>
-    </header>
-    <figure class="screen-frame api-screen" data-reveal data-tilt>
-      <img src={api.screenshots?.[0].src} alt={api.screenshots?.[0].alt} loading="lazy" />
-      <figcaption>LIVE RANKING / WEEKLY TOKEN USAGE</figcaption>
-    </figure>
+    <header class="chapter-copy" data-reveal><span class="chapter-number">05</span><div><p class="project-label">{api.label} · {api.status}</p><h2>{api.title}</h2><p class="project-lede">{api.summary}</p><div class="api-facts"><span><strong>100亿+</strong>累计 Token</span><span><strong>50+</strong>用户</span><span><strong>¥500+</strong>营收</span></div><a class="text-link" href="https://api.0000238.xyz/rankings" target="_blank" rel="noreferrer">查看实时排行榜 <span>↗</span></a></div></header>
+    <figure class="screen-frame api-screen" data-reveal data-tilt><img src={api.screenshots?.[0].src} alt={api.screenshots?.[0].alt} loading="lazy" /><figcaption>LIVE RANKING / WEEKLY TOKEN USAGE</figcaption></figure>
     <p class="api-caption" data-reveal>画面中的 1.85B 是截图时的当周用量；100 亿+ 为项目累计 Token 指标。</p>
   </article>
 
   <article class="project-chapter project-mise" id="mise-studio" data-project-section>
-    <div class="mise-ribbon" aria-hidden="true">SCRIPT · STORYBOARD · VISUAL · VOICE · RENDER ·</div>
-    <header class="chapter-copy section-shell" data-reveal>
-      <span class="chapter-number">05</span>
-      <div>
-        <p class="project-label">{mise.label} · {mise.status}</p>
-        <h2>{mise.title}</h2>
-        <p class="project-lede">{mise.summary}</p>
-        <ul class="tech-inline">{mise.stack.slice(0, 5).map((item) => <li>{item}</li>)}</ul>
-      </div>
-    </header>
-    <div class="mise-stage section-shell" data-reveal>
-      <figure class="screen-frame mise-screen" data-tilt>
-        <img src={mise.screenshots?.[0].src} alt={mise.screenshots?.[0].alt} loading="lazy" />
-        <figcaption>MISE STUDIO / ACTUAL WORKBENCH</figcaption>
-      </figure>
-      <aside>
-        <span>01</span><strong>场景与分镜</strong>
-        <span>02</span><strong>画面预览</strong>
-        <span>03</span><strong>时间线与配音</strong>
-        <span>04</span><strong>属性与渲染</strong>
-      </aside>
-    </div>
+    <div class="mise-ribbon" aria-hidden="true">RESEARCH · SCRIPT · STORYBOARD · VISUAL · VOICE · RENDER ·</div>
+    <header class="chapter-copy section-shell" data-reveal><span class="chapter-number">06</span><div><p class="project-label">{mise.label} · {mise.status}</p><h2>{mise.title}</h2><p class="project-lede">{mise.summary}</p><ul class="tech-inline">{mise.stack.slice(0, 6).map((item) => <li>{item}</li>)}</ul><a class="text-link" href="https://video.0000238.xyz" target="_blank" rel="noreferrer">进入 Mise Studio <span>↗</span></a></div></header>
+    <div class="mise-stage section-shell" data-reveal><figure class="screen-frame mise-screen" data-tilt><img src={mise.screenshots?.[0].src} alt={mise.screenshots?.[0].alt} loading="lazy" /><figcaption>MISE STUDIO / ACTUAL WORKBENCH</figcaption></figure><aside>{miseFlow.map((step, index) => <><span>{String(index + 1).padStart(2, "0")}</span><strong>{step}</strong></>)}</aside></div>
   </article>
 
-  <section class="experience section-shell" id="experience" aria-labelledby="experience-title">
-    <div class="section-heading" data-reveal>
-      <p class="section-label">EXPERIENCE / 2025—NOW</p>
-      <h2 id="experience-title">实践经历</h2>
-    </div>
-    <div class="experience-list">
-      {siteContent.experience.map((item, index) => (
-        <article data-reveal>
-          <span class="experience-index">0{index + 1}</span>
-          <time>{item.period}</time>
-          <div>
-            <h3>{item.company}</h3><strong>{item.role}</strong>
-            <p>{item.summary}</p><small>{item.detail}</small><em>{item.evidence}</em>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="capabilities section-shell" id="capabilities" aria-labelledby="capabilities-title">
-    <div class="section-heading" data-reveal>
-      <p class="section-label">CAPABILITIES</p>
-      <h2 id="capabilities-title">能力矩阵</h2>
-    </div>
-    <div class="skill-grid">
-      {siteContent.skills.map((skill) => (
-        <article data-reveal>
-          <h3>{skill.label}</h3>
-          <ul>{skill.items.map((item) => <li>{item}</li>)}</ul>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="education section-shell" aria-labelledby="education-title" data-reveal>
-    <p class="section-label">EDUCATION</p>
-    <div>
-      <h2 id="education-title">{siteContent.education.school}</h2>
-      <p>{siteContent.education.degree}</p><time>{siteContent.education.period}</time>
-    </div>
-  </section>
-
-  <footer class="contact" id="contact" aria-labelledby="contact-title">
-    <canvas class="footer-canvas" data-footer-canvas aria-hidden="true"></canvas>
-    <div class="section-shell contact-inner" data-reveal>
-      <p class="section-label">LET'S BUILD SOMETHING USEFUL</p>
-      <h2 id="contact-title">一起把复杂问题，<br />做成<span>可用</span>系统。</h2>
-      <div class="contact-links">
-        <a href={siteContent.contact.github} target="_blank" rel="noreferrer">GitHub <i>↗</i></a>
-        <a href={`mailto:${siteContent.contact.email}`}>Email <i>↗</i></a>
-        <a href={siteContent.contact.resume} target="_blank">下载简历 <i>↓</i></a>
-      </div>
-      <div class="contact-signoff"><span>YE JUNFENG / 叶峻枫</span><span>GUANGZHOU · 2026</span></div>
-    </div>
-  </footer>
+  <section class="capabilities section-shell" id="capabilities" aria-labelledby="capabilities-title"><div class="section-heading" data-reveal><p class="section-label">CAPABILITIES</p><h2 id="capabilities-title">能力矩阵</h2></div><div class="skill-grid">{siteContent.skills.map((skill) => <article data-reveal><h3>{skill.label}</h3><ul>{skill.items.map((item) => <li>{item}</li>)}</ul></article>)}</div></section>
+  <section class="education section-shell" aria-labelledby="education-title" data-reveal><p class="section-label">EDUCATION</p><div><h2 id="education-title">{siteContent.education.school}</h2><p>{siteContent.education.degree}</p><time>{siteContent.education.period}</time></div></section>
+  <footer class="contact" id="contact" aria-labelledby="contact-title"><canvas class="footer-canvas" data-footer-canvas aria-hidden="true"></canvas><div class="section-shell contact-inner" data-reveal><p class="section-label">LET'S BUILD SOMETHING USEFUL</p><h2 id="contact-title">一起把复杂问题，<br />做成<span>可用</span>系统。</h2><div class="contact-links"><a href={siteContent.contact.github} target="_blank" rel="noreferrer">GitHub <i>↗</i></a><a href={`mailto:${siteContent.contact.email}`}>Email <i>↗</i></a><a href={siteContent.contact.resume} target="_blank">下载简历 <i>↓</i></a></div><div class="contact-signoff"><span>YE JUNFENG / 叶峻枫</span><span>GUANGZHOU · 2026</span></div></div></footer>
 </BaseLayout>
