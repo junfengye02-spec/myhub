@@ -1,0 +1,86 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: yven-site-production
+  cancel-in-progress: false
+
+env:
+  IMAGE_TAG: yven-site:git-${{ github.sha }}
+  IMAGE_ARCHIVE: /tmp/yven-site-${{ github.sha }}.tar.gz
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy to 154.44.1.62
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out production source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build production image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          tags: ${{ env.IMAGE_TAG }}
+          build-args: |
+            PUBLIC_SITE_URL=https://yven.0000238.xyz
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Package image
+        run: docker save "$IMAGE_TAG" | gzip -1 > "$IMAGE_ARCHIVE"
+
+      - name: Configure deployment SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Upload image to production
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          REMOTE_ARCHIVE="/home/${DEPLOY_USER}/uploads/yven-site-${GITHUB_SHA}.tar.gz"
+          scp -i "$HOME/.ssh/deploy_key" \
+            -o BatchMode=yes \
+            "$IMAGE_ARCHIVE" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${REMOTE_ARCHIVE}"
+
+      - name: Activate image and verify health
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          REMOTE_ARCHIVE="/home/${DEPLOY_USER}/uploads/yven-site-${GITHUB_SHA}.tar.gz"
+          ssh -i "$HOME/.ssh/deploy_key" \
+            -o BatchMode=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "sudo /usr/local/sbin/yven-site-deploy '${REMOTE_ARCHIVE}' '${IMAGE_TAG}' '${GITHUB_SHA}'"
+
+      - name: Verify public endpoint
+        run: |
+          curl --fail --silent --show-error \
+            --retry 6 --retry-delay 5 --retry-all-errors \
+            https://yven.0000238.xyz/healthz > /dev/null

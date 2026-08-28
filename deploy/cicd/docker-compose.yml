@@ -1,0 +1,22 @@
+services:
+  web:
+    image: ${YVEN_SITE_IMAGE}
+    container_name: yven-site-web
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 100
+    mem_limit: 128m
+    cpus: 0.50
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true
+    name: new-api-prod_new-api-prod-network

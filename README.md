@@ -78,11 +78,14 @@ npm run preview
 
 ## 部署域名
 
-正式部署建议：
+生产地址：`https://yven.0000238.xyz`
 
-1. `npm run build`
-2. 用 Nginx/Caddy 指向 `dist/`
-3. 域名 A 记录解析到服务器公网 IP
-4. 开启 HTTPS
+向 `main` 分支推送后，GitHub Actions 会自动构建 Docker 镜像并发布到生产服务器。发布链路包含容器健康检查、公网检查和失败自动回滚，详细说明见 `deploy/cicd/README.zh_CN.md`。
 
-如果只是临时演示，也可以让反向代理转发到 `http://127.0.0.1:5173`。
+手动验证：
+
+```bash
+curl --fail --silent --show-error https://yven.0000238.xyz/healthz
+```
+
+本地仍可通过 `npm run build` 和 `npm run preview` 检查生产构建。

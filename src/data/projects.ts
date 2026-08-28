@@ -29,6 +29,19 @@ export type Project = {
   featured?: boolean;
 };
 
+const projectOrder = [
+  "yven-api",
+  "mise-studio",
+  "quantclaw",
+  "reviewchecklist",
+  "aps-mes",
+  "adaptive-interview-coach",
+];
+const projectRank = (slug: string) => {
+  const rank = projectOrder.indexOf(slug);
+  return rank === -1 ? projectOrder.length : rank;
+};
+
 export const projects: Project[] = [
   {
     slug: "aps-mes",
@@ -204,7 +217,7 @@ export const projects: Project[] = [
     ],
     featured: true,
   },
-];
+].sort((a, b) => projectRank(a.slug) - projectRank(b.slug));
 
 export const categoryLabels: Record<ProjectCategory | "all", string> = {
   all: "全部",
