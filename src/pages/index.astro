@@ -6,6 +6,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const bySlug = (slug: string) => projects.find((project) => project.slug === slug)!;
 const review = bySlug("reviewchecklist");
 const apsMes = bySlug("aps-mes");
+const wms = bySlug("wms-ye");
 const quant = bySlug("quantclaw");
 const jobSearch = bySlug("adaptive-interview-coach");
 const api = bySlug("yven-api");
@@ -44,6 +45,12 @@ const papers = [
 const jobFlow = ["最新简历", "四路岗位发现", "详情页证据核验", "去重与岗位画像", "JD 驱动模拟面试", "弱点复习队列"];
 const miseFlow = ["灵感", "蓝图", "分镜", "资源", "生成单元", "成片"];
 const miseModes = ["故事短片", "品牌叙事", "概念预告"];
+const wmsFlow = [
+  { title: "扫码核对", text: "识别设备、项目与合同，确认实际数量。" },
+  { title: "创建申请", text: "汇总入出库明细，出库草稿冻结可用量。" },
+  { title: "整单审批", text: "按库位分配审批，驳回或撤销释放冻结。" },
+  { title: "库存落账", text: "审批通过后更新库存，保留来源与时间线。" },
+];
 ---
 
 <BaseLayout title={siteContent.pages.home.title} description={siteContent.pages.home.description} current="home">
@@ -120,15 +127,15 @@ const miseModes = ["故事短片", "品牌叙事", "概念预告"];
   </section>
 
   <section class="project-index section-shell" id="projects" aria-labelledby="projects-title">
-    <div data-reveal><p class="section-label">SELECTED SYSTEMS / 01—06</p><h2 id="projects-title">把复杂问题，<br />拆成可验证的系统。</h2></div>
-    <p data-reveal>从真实运营的模型网关，到影像创作与量化研究，再进入企业审评和制造交付：六个案例都以可验证结果为起点。</p>
+    <div data-reveal><p class="section-label">SELECTED SYSTEMS / 01—07</p><h2 id="projects-title">把复杂问题，<br />拆成可验证的系统。</h2></div>
+    <p data-reveal>从真实运营的模型网关，到影像创作与量化研究，再进入企业审评、制造协同和仓储管理：七个独立案例都以可验证结果为起点。</p>
   </section>
 
   <article class="project-chapter project-api project-lead" id="yven-api" data-project-section>
-    <div class="api-orbit" aria-hidden="true"><span>100亿+</span><i></i><i></i></div>
-    <header class="chapter-copy" data-reveal><span class="chapter-number">01</span><div><p class="project-label">{api.label} · {api.status}</p><h2>{api.title}</h2><p class="project-lede">{api.summary}</p><div class="project-signal"><span>KEY RESULT / 核心成果</span><strong>{api.metric}</strong></div><div class="api-facts"><span><strong>50+</strong>用户</span><span><strong>¥500+</strong>营收</span></div><a class="text-link" href="https://api.0000238.xyz/rankings" target="_blank" rel="noreferrer">查看实时排行榜 <span>↗</span></a></div></header>
-    <figure class="screen-frame api-screen" data-reveal data-tilt><img src={api.screenshots?.[0].src} alt={api.screenshots?.[0].alt} loading="lazy" /><figcaption>LIVE RANKING / WEEKLY TOKEN USAGE</figcaption></figure>
-    <p class="api-caption" data-reveal>画面中的 1.85B 是截图时的当周用量；100 亿+ 为项目累计 Token 指标。</p>
+    <div class="api-orbit" aria-hidden="true"><span>13B</span><i></i><i></i></div>
+    <header class="chapter-copy" data-reveal><span class="chapter-number">01</span><div><p class="project-label">{api.label} · {api.status}</p><h2>{api.title}</h2><p class="project-lede">{api.summary}</p><div class="project-signal"><span>KEY RESULT / 核心成果</span><strong>{api.metric}</strong></div><div class="api-facts"><span><strong>50+</strong>用户</span><span><strong>¥1,000</strong>累计营收</span></div><a class="text-link" href="https://api.0000238.xyz/rankings" target="_blank" rel="noreferrer">查看实时排行榜 <span>↗</span></a></div></header>
+    <figure class="screen-frame api-screen" data-reveal data-tilt><img src={api.screenshots?.[0].src} alt={api.screenshots?.[0].alt} loading="lazy" /><figcaption>2026 RANKING / YEARLY TOKEN USAGE</figcaption></figure>
+    <p class="api-caption" data-reveal>截图为“今年”视图，显示 2026 年内 13.2B Token；项目累计用量已达 130 亿 Token（13B），累计营收 ¥1,000。数据更新于 2026 年 10 月。</p>
   </article>
 
   <article class="project-chapter project-mise" id="mise-studio" data-project-section>
@@ -231,8 +238,45 @@ const miseModes = ["故事短片", "品牌叙事", "概念预告"];
     <div class="aps-contract section-shell" data-reveal><span>APS OUTPUT</span><i>工序 / 资源 / 开始结束 / 版本</i><b>↔</b><span>MES CALLBACK</span><i>进度 / 库存 / 质量 / 异常</i></div>
   </article>
 
+  <article class="project-chapter project-wms" id="wms-ye" data-project-section aria-labelledby="wms-title">
+    <div class="wms-heading section-shell">
+      <header class="chapter-copy" data-reveal>
+        <span class="chapter-number">06</span>
+        <div>
+          <p class="project-label">{wms.label} · {wms.status}</p>
+          <h2 id="wms-title">{wms.title}</h2>
+          <p class="project-lede">{wms.summary}</p>
+          <div class="project-signal"><span>KEY RESULT / 核心成果</span><strong>{wms.metric}</strong></div>
+          <ul class="tech-inline">{wms.stack.slice(0, 4).map((item) => <li>{item}</li>)}</ul>
+          <div class="wms-actions">
+            <a class="text-link" href={`/projects/${wms.slug}/`}>完整案例 <span>↗</span></a>
+            <a class="text-link" href={wms.links[0].href} target="_blank" rel="noreferrer">GitHub 源码 <span>↗</span></a>
+          </div>
+        </div>
+      </header>
+      <aside class="wms-note" data-reveal>
+        <span>WAREHOUSE MANAGEMENT</span>
+        <h3>每一次库存变化，<br />都有业务来处。</h3>
+        <p>从设备扫码到审批落账，把项目、合同、质保和来源明细留在同一条追溯链上。</p>
+        <small>基于 InvenTree 1.5.1 二次开发</small>
+      </aside>
+    </div>
+    <div class="wms-evidence section-shell">
+      {wms.screenshots?.slice(0, 2).map((shot, index) => (
+        <figure data-reveal>
+          <div class="wms-sheet-head"><span>0{index + 1} / {index === 0 ? "SCAN & VERIFY" : "RECEIPT & LABEL"}</span><strong>{index === 0 ? "扫码核对" : "入库准备与标签"}</strong></div>
+          <img src={shot.src} alt={shot.alt} loading="lazy" decoding="async" width="743" height="814" />
+          <figcaption>{shot.caption}</figcaption>
+        </figure>
+      ))}
+    </div>
+    <ol class="wms-flow section-shell" aria-label="WMS 出入库流程" data-reveal>
+      {wmsFlow.map((step, index) => <li><span>0{index + 1}</span><h3>{step.title}</h3><p>{step.text}</p></li>)}
+    </ol>
+  </article>
+
   <article class="project-chapter project-job" id="adaptive-interview-coach" data-project-section>
-    <header class="chapter-copy section-shell" data-reveal><span class="chapter-number">06</span><div><p class="project-label">{jobSearch.label} · {jobSearch.status}</p><h2>{jobSearch.title}</h2><p class="project-lede">{jobSearch.summary}</p><div class="project-signal"><span>KEY RESULT / 核心成果</span><strong>{jobSearch.metric}</strong></div><ul class="tech-inline">{jobSearch.stack.slice(0, 6).map((item) => <li>{item}</li>)}</ul></div></header>
+    <header class="chapter-copy section-shell" data-reveal><span class="chapter-number">07</span><div><p class="project-label">{jobSearch.label} · {jobSearch.status}</p><h2>{jobSearch.title}</h2><p class="project-lede">{jobSearch.summary}</p><div class="project-signal"><span>KEY RESULT / 核心成果</span><strong>{jobSearch.metric}</strong></div><ul class="tech-inline">{jobSearch.stack.slice(0, 6).map((item) => <li>{item}</li>)}</ul></div></header>
     <div class="job-console section-shell" data-reveal data-paper-tilt>
       <div class="skill-manifest"><span>SKILL.md</span><strong>adaptive-interview-coach</strong><p>从最新简历出发，把岗位搜集、证据核验、JD 画像、模拟面试和弱点复习收束为一个可持续运行的求职系统。</p><a href="https://github.com/junfengye02-spec/JobSearchTraining_skill" target="_blank" rel="noreferrer">PUBLIC GITHUB ↗</a></div>
       <ol>{jobFlow.map((step, index) => <li><span>{String(index + 1).padStart(2, "0")}</span><strong>{step}</strong></li>)}</ol>

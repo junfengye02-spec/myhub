@@ -35,6 +35,7 @@ const projectOrder = [
   "quantclaw",
   "reviewchecklist",
   "aps-mes",
+  "wms-ye",
   "adaptive-interview-coach",
 ];
 const projectRank = (slug: string) => {
@@ -43,6 +44,37 @@ const projectRank = (slug: string) => {
 };
 
 export const projects: Project[] = [
+  {
+    slug: "wms-ye",
+    title: "wmsYe",
+    category: "industrial",
+    label: "成品仓 WMS",
+    status: "Open Source",
+    accent: "brass",
+    year: "2026",
+    metric: "扫码、审批、库存与合同追溯",
+    summary: "基于 InvenTree 二次开发的成品仓管理系统，将扫码出入库、整单审批、库存冻结、项目合同与质保管理串成可追溯的仓储流程。",
+    description: "wmsYe 面向设备与成品的仓储管理，基于 InvenTree 1.5.1 二次开发。扫码先核对设备、项目、合同与数量，再创建出入库申请；入库通过整单审批后落账，出库加入草稿时冻结可用数量，审批通过后原子扣减。项目档案、合同验收与质保、入库准备单和完整标签保留来源关联，让每次库存变化都能回到业务单据与审批记录。",
+    stack: ["Django REST Framework", "React", "TypeScript", "PostgreSQL", "Redis", "Docker Compose"],
+    access: "公开源码 · 本地验收截图",
+    screenshots: [
+      { src: "/project-shots/wms-ye-inbound.png", alt: "wmsYe 入库扫码核对界面，展示测试设备、项目、合同及质保信息", caption: "真实预览系统：扫码带出设备、项目、合同与质保信息，核对后加入申请。画面为本地验收数据。" },
+      { src: "/project-shots/wms-ye-receipt.png", alt: "wmsYe 入库填单与打印界面，展示保存的准备单与设备明细", caption: "入库准备与标签：设备、项目、合同和准备数量关联到同一张单据；保存或补打标签不增加库存。" },
+      { src: "/project-shots/wms-ye-approval.jpg", alt: "wmsYe 已完成的出库审批记录与申请时间线", caption: "整单审批记录：保留申请人、审批路由与时间线，完成出库后释放对应冻结数量。" },
+    ],
+    caseStudy: {
+      role: "基于 InvenTree 承接成品仓业务二次开发：实现扫码核对、出入库审批、库存冻结、合同质保和标签追溯，并完成中文工作台、容器部署配置与本地流程验证。",
+      modules: ["统一扫码入口识别设备编号、库存码与完整标签，核对后生成申请明细。", "整单审批驱动库存变动，覆盖出库冻结、审批扣减、驳回、撤销和超时释放。", "项目、合同、验收日期、质保与入库准备单联动，支持 PDF 标签和可选 QZ Tray 打印。"],
+      challenges: ["并发出库要区分库存、冻结与可用数量，通过事务与幂等重试避免超扣或重复落账。", "合同与归属可维护，历史出入库仍需保留办理时的业务快照和来源明细。", "操作员、审批人与管理员职责不同，工作台入口和后端权限共同约束库存操作。"],
+      outcomes: ["独立公开仓库提供二开源码、部署配置与中文业务文档。", "本地真实预览系统已验证入库审批、出库冻结与扣减、合同质保和来源追溯。", "标签 PDF 与软件解码已验证；Windows 实物出纸与打印后扫码仍待现场验收。"],
+    },
+    highlights: ["重复扫描完整标签只定位已有明细，确认数量后才加入申请。", "入库审批前不增加库存；出库先冻结可用数量，审批通过后再扣减。", "合同质保与来源明细贯穿准备单、库存及历史记录，归属维护保留审计。"],
+    links: [
+      { label: "GitHub 源码", href: "https://github.com/junfengye02-spec/wmsYe", external: true },
+      { label: "业务使用说明", href: "https://github.com/junfengye02-spec/wmsYe/blob/main/docs/INVENTREE_WMS_CONTRACT_WARRANTY_GUIDE.md", external: true },
+    ],
+    featured: true,
+  },
   {
     slug: "aps-mes",
     title: "APS × MES",
@@ -162,22 +194,22 @@ export const projects: Project[] = [
     status: "Live",
     accent: "ink",
     year: "2026",
-    metric: "累计 100 亿+ Token",
+    metric: "累计 130 亿 Token · 13B",
     summary: "面向开发者的多模型 API 网关：统一协议、模型路由、用量计量与实时排行榜，累计服务 50+ 用户。",
-    description: "Yven API 将 GPT、Claude、Gemini 等模型入口统一到一套开发者接口，并围绕上游路由、兼容协议、调用计量和模型排行构建产品体验。项目目前累计 Token 使用量超过 100 亿，服务 50+ 用户，累计营收超过 ¥500。排行榜截图来自真实线上页面，展示的是当周用量；累计指标来自项目运营数据。",
+    description: "Yven API 将 GPT、Claude、Gemini 等模型入口统一到一套开发者接口，并围绕上游路由、兼容协议、调用计量和模型排行构建产品体验。项目累计 Token 使用量达到 130 亿（13B），服务 50+ 用户，累计营收达到 ¥1,000。排行榜截图来自真实线上页面，展示的是 2026 年内用量；累计指标由项目作者于 2026 年 10 月更新。",
     stack: ["Go", "Gin", "OAuth", "Model Routing", "OpenAI Compatible", "Usage Metering"],
     access: "公开访问 · 真实排行榜截图",
     screenshots: [
-      { src: "/project-shots/yven-api-rankings.png", alt: "Yven API 真实 Token 排行榜", caption: "线上排行榜：当周 Token 用量、模型分布和增长趋势实时更新。" },
+      { src: "/project-shots/yven-api-rankings-2026.png", alt: "Yven API 排行榜今年视图，显示 2026 年内 13.2B Token 用量和模型排名", caption: "线上排行榜今年视图：截图显示 2026 年内 13.2B Token 用量、每周趋势和模型排名；不等同于历史累计值。" },
       { src: "/project-shots/yven-api-home.png", alt: "Yven API 真实产品首页", caption: "统一 AI 网关首页：协议兼容、模型接入与开发者入口。" },
     ],
     caseStudy: {
       role: "产品化与网关集成：把多模型代理、账号池和用量数据组织成可访问、可计量、可运营的开发者产品。",
       modules: ["统一 OpenAI 兼容入口，处理多模型请求/响应转换、流式输出与工具调用。", "按 Provider 与模型做路由、账号池调度、故障切换和调用统计。", "将 Token 计量、模型用量和增长趋势转成公开排行榜。"],
       challenges: ["不同模型协议、限额和流式行为不一致，需要稳定转换和 fallback。", "计量既要对开发者透明，也要支撑运营、成本判断与排行榜更新。", "高用量下需要控制路由延迟、上游失败和账号池热点。"],
-      outcomes: ["项目运营数据：累计 100 亿+ Token、50+ 用户、¥500+ 累计营收。", "真实线上排行榜可按今天、本周、本月与今年查看模型用量。", "当前截图中的 1.85B 为拍摄时的当周用量，不与累计指标混淆。"],
+      outcomes: ["项目运营数据：累计 130 亿 Token（13B）、50+ 用户、¥1,000 累计营收。", "真实线上排行榜可按今天、本周、本月与今年查看模型用量。", "截图中的 13.2B 为 2026 年内用量，截图拍摄于 2026 年 10 月；历史累计指标由项目作者提供。"],
     },
-    highlights: ["100 亿+ 是累计 Token 指标；页面截图以当周数据展示模型分布。", "排行不是静态宣传图，而是直接来自生产计量数据。", "产品价值同时覆盖开发者接入体验与网关运营可观测性。"],
+    highlights: ["130 亿（13B）是项目作者提供的累计 Token 指标；今年视图截图显示 2026 年内 13.2B。", "排行不是静态宣传图，而是直接来自生产计量数据。", "产品价值同时覆盖开发者接入体验与网关运营可观测性。"],
     links: [
       { label: "访问 Yven API", href: "https://api.0000238.xyz/", external: true },
       { label: "查看排行榜", href: "https://api.0000238.xyz/rankings", external: true },

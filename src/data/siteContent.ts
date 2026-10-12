@@ -7,19 +7,19 @@ export const siteContent = {
     },
     projects: {
       title: "项目作品 | 叶峻枫",
-      description: "ReviewChecklist、APS × MES、QuantClaw、Adaptive Interview Coach、Yven API 与 Mise Studio 项目案例。",
+      description: "ReviewChecklist、APS × MES、wmsYe、QuantClaw、Adaptive Interview Coach、Yven API 与 Mise Studio 七个独立项目案例。",
     },
   },
   hero: {
     eyebrow: "AI APPLICATION DEVELOPER · 2027",
     title: "叶峻枫",
     statement: "把 Agent、RAG 与复杂业务，做成真正可用的系统。",
-    summary: "聚焦 AI Agent 工作流与工业业务系统之间的落地：从证据可追溯的文档审评，到制造排程、多模型 API 和生成式视频工具。",
+    summary: "聚焦 AI Agent 工作流与工业业务系统之间的落地：从证据可追溯的文档审评，到制造排程、仓储管理、多模型 API 和生成式视频工具。",
   },
   metrics: [
-    { value: "100亿+", label: "累计 Token" },
+    { value: "130亿", label: "累计 Token" },
     { value: "50+", label: "用户" },
-    { value: "¥500+", label: "累计营收" },
+    { value: "¥1,000", label: "累计营收" },
     { value: "10", label: "开源项目适配" },
     { value: "5", label: "类 MCP 工具" },
   ],

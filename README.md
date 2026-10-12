@@ -1,6 +1,6 @@
 # yven Personal Atelier
 
-一个 Astro 个人主页。当前结构围绕 3 个已上线项目展开：Titan APS、MES 制造执行系统、Sub2API，用真实截图、访问入口和项目详情呈现个人工程能力。
+一个 Astro 个人主页。当前展示 7 个独立项目：Yven API、Mise Studio、QuantClaw、ReviewChecklist、APS × MES、wmsYe 和 Adaptive Interview Coach，用真实截图、访问入口和项目详情呈现个人工程能力。wmsYe 是基于 InvenTree 二次开发的成品仓 WMS，源码地址为 https://github.com/junfengye02-spec/wmsYe。
 
 ## 本地运行
 
